@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-brand-primary: #06036a;
+  --color-navy-50: #f0f4f8;
+  --color-navy-100: #d9e2ec;
+  --color-navy-200: #bcccdc;
+  --color-navy-300: #9fb3c8;
+  --color-navy-400: #829ab1;
+  --color-navy-500: #627d98;
+  --color-navy-600: #486581;
+  --color-navy-700: #334e68;
+  --color-navy-800: #243b53;
+  --color-navy-900: #102a43;
+  --color-navy-950: #0a192f;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+}
+
+/* Utility Classes */
+@utility safe-top { padding-top: var(--sat); }
+@utility safe-bottom { padding-bottom: var(--sab); }
+@utility h-safe-top { height: var(--sat); }
+@utility pb-safe { padding-bottom: var(--sab); }
+@utility mt-safe { margin-top: var(--sat); }
+@utility mb-safe { margin-bottom: var(--sab); }
+@utility safe-bottom-padding { padding-bottom: calc(1rem + var(--sab)); }
+
+@utility glass-morphism {
+  background-color: color-mix(in srgb, white 40%, transparent);
+  backdrop-filter: blur(24px);
+  border: 1px solid color-mix(in srgb, white 20%, transparent);
+
+  @variant dark {
+    background-color: color-mix(in srgb, black 40%, transparent);
+    border-color: color-mix(in srgb, white 10%, transparent);
+  }
+}
+
+@utility glass-morphism-heavy {
+  background-color: color-mix(in srgb, white 60%, transparent);
+  backdrop-filter: blur(40px);
+  border: 1px solid color-mix(in srgb, white 30%, transparent);
+
+  @variant dark {
+    background-color: color-mix(in srgb, black 60%, transparent);
+    border-color: color-mix(in srgb, white 20%, transparent);
+  }
+}
+
+@utility glass-card {
+  background-color: color-mix(in srgb, white 40%, transparent);
+  backdrop-filter: blur(24px);
+  border: 1px solid color-mix(in srgb, white 20%, transparent);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+
+  @variant dark {
+    background-color: color-mix(in srgb, black 40%, transparent);
+    border-color: color-mix(in srgb, white 10%, transparent);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+@utility premium-gradient-text {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, var(--color-navy-900), var(--color-navy-600), var(--color-navy-900));
+
+  @variant dark {
+    background-image: linear-gradient(to right, white, var(--color-navy-200), white);
+  }
+}
+
+@utility transition-premium {
+  transition-property: all;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@utility hover-scale-premium {
+  transition-property: all;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover { transform: scale(1.02); }
+  &:active { transform: scale(0.98); }
+}
+
+/* Smooth scrolling for native feel */
+* {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+input, textarea {
+  user-select: text;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Animation for desktop entry */
+@keyframes slide-up-premium {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up-premium 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
