@@ -6,7 +6,7 @@ import { callService } from '../services/callService';
 import { toast } from 'react-hot-toast';
 
 // Import types for type-safety
-import type { IAgoraRTC, IAgoraRTCClient, ICameraVideoTrack, IMicrophoneAudioTrack, IRemoteUser } from 'agora-rtc-sdk-ng';
+import type { IAgoraRTC, IAgoraRTCClient, ICameraVideoTrack, IMicrophoneAudioTrack, IAgoraRTCRemoteUser } from 'agora-rtc-sdk-ng';
 
 interface CallState {
     peer: User;
@@ -23,7 +23,7 @@ interface CallContextType {
     rejectCall: () => Promise<void>;
     activeCall: CallState | null;
     localTracks: { video?: ICameraVideoTrack; audio?: IMicrophoneAudioTrack };
-    remoteUsers: IRemoteUser[];
+    remoteUsers: IAgoraRTCRemoteUser[];
     isMuted: boolean;
     isCameraOff: boolean;
     toggleMute: () => void;
@@ -57,7 +57,7 @@ const AGORA_APP_ID = process.env.NEXT_PUBLIC_AGORA_APP_ID || "";
 
 export const CallProvider: React.FC<{ currentUser: User | null; children: React.ReactNode }> = ({ children, currentUser }) => {
     const [activeCall, setActiveCall] = useState<CallState | null>(null);
-    const [remoteUsers, setRemoteUsers] = useState<IRemoteUser[]>([]);
+    const [remoteUsers, setRemoteUsers] = useState<IAgoraRTCRemoteUser[]>([]);
     const [localTracks, setLocalTracks] = useState<{ video?: ICameraVideoTrack; audio?: IMicrophoneAudioTrack }>({});
     const [isMuted, setIsMuted] = useState(false);
     const [isCameraOff, setIsCameraOff] = useState(false);
@@ -65,15 +65,23 @@ export const CallProvider: React.FC<{ currentUser: User | null; children: React.
     const clientRef = useRef<IAgoraRTCClient | null>(null);
     const agoraRef = useRef<IAgoraRTC | null>(null);
     const isMounted = useRef(true);
+    // Use a ref to read activeCall inside callbacks without adding it to useEffect deps.
+    // Adding activeCall to deps caused the subscription to tear down & rebuild on every
+    // state change, losing incoming signals mid-call.
+    const activeCallRef = useRef<CallState | null>(null);
+    useEffect(() => { activeCallRef.current = activeCall; }, [activeCall]);
 
     useEffect(() => {
         isMounted.current = true;
         if (!currentUser) return;
 
-        // Initialize Call signaling subscription
+        // Initialize Call signaling subscription.
+        // IMPORTANT: dependency array is [currentUser] ONLY — adding activeCall here
+        // caused the subscription to rebuild every time call state changed, losing events.
         const channel = callService.subscribeToCalls(currentUser.id, {
             onIncoming: (payload) => {
-                if (activeCall) {
+                // Use the ref so we don't need activeCall in the deps array.
+                if (activeCallRef.current) {
                     callService.sendSignal(payload.callerId, 'call_busy', { channelId: payload.channelId });
                     return;
                 }
@@ -85,9 +93,10 @@ export const CallProvider: React.FC<{ currentUser: User | null; children: React.
                     channelId: payload.channelId
                 });
             },
-            onAccepted: async (payload) => {
-                if (activeCall && activeCall.isCaller) {
-                    await joinAgoraChannel(activeCall.channelId);
+            onAccepted: async (_payload) => {
+                const current = activeCallRef.current;
+                if (current && current.isCaller) {
+                    await joinAgoraChannel(current.channelId);
                     if (isMounted.current) {
                         setActiveCall(prev => prev ? { ...prev, status: 'connected' } : null);
                     }
@@ -108,7 +117,7 @@ export const CallProvider: React.FC<{ currentUser: User | null; children: React.
             callService.unsubscribe(channel);
             cleanup();
         };
-    }, [currentUser, activeCall]);
+    }, [currentUser]); // <-- Only re-subscribe when the logged-in user changes
 
     const cleanup = async () => {
         if (localTracks.audio) {
@@ -164,7 +173,8 @@ export const CallProvider: React.FC<{ currentUser: User | null; children: React.
             const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
             let videoTrack: ICameraVideoTrack | undefined;
             
-            if (activeCall?.type === 'video') {
+            // Read from ref so this function doesn't need activeCall in its closure deps
+            if (activeCallRef.current?.type === 'video') {
                 videoTrack = await AgoraRTC.createCameraVideoTrack();
             }
 
@@ -177,11 +187,12 @@ export const CallProvider: React.FC<{ currentUser: User | null; children: React.
             }
 
             // Log the call in history
-            if (activeCall) {
+            const callSnapshot = activeCallRef.current;
+            if (callSnapshot) {
                 await callService.logCall(
-                    activeCall.isCaller ? currentUser!.id : activeCall.peer.id,
-                    activeCall.isCaller ? activeCall.peer.id : currentUser!.id,
-                    activeCall.type,
+                    callSnapshot.isCaller ? currentUser!.id : callSnapshot.peer.id,
+                    callSnapshot.isCaller ? callSnapshot.peer.id : currentUser!.id,
+                    callSnapshot.type,
                     'completed'
                 );
             }

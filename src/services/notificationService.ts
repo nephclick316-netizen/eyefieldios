@@ -21,7 +21,6 @@ export interface Notification {
   createdAt: string;
 }
 
-const ADMIN_EMAIL = 'edocardadmin@eyefield.pro';
 
 export const notificationService = {
   async registerPush(userId: string) {
@@ -82,10 +81,8 @@ export const notificationService = {
     );
 
     if (error) {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.email === ADMIN_EMAIL) {
-        console.error("Failed to create notification:", error);
-      }
+      // Always log so developers can see failures in the browser console.
+      console.error("Failed to create notification:", error);
     }
   },
 

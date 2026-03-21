@@ -5,17 +5,28 @@ export const callService = {
     return `ef_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`;
   },
 
-  async sendSignal(targetUserId: string, event: string, payload: any) {
-    const channel = supabase.channel(`calls_tx:${Date.now()}`);
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await supabase.channel(`calls:${targetUserId}`).send({
-          type: 'broadcast',
-          event: event,
-          payload: payload
-        });
-        supabase.removeChannel(channel);
-      }
+  async sendSignal(targetUserId: string, event: string, payload: any): Promise<void> {
+    return new Promise((resolve) => {
+      // We MUST send through a subscribed channel. Create a dedicated tx channel,
+      // wait for SUBSCRIBED, send the signal through IT (not a new handle), then clean up.
+      const txChannel = supabase.channel(`calls_tx:${targetUserId}:${Date.now()}`, {
+        config: { broadcast: { self: true } }
+      });
+
+      txChannel.subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await txChannel.send({
+            type: 'broadcast',
+            event,
+            payload
+          });
+          supabase.removeChannel(txChannel);
+          resolve();
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          supabase.removeChannel(txChannel);
+          resolve(); // resolve anyway so callers don't hang
+        }
+      });
     });
   },
 
