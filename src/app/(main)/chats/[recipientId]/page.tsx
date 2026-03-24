@@ -5,6 +5,9 @@ import dynamic from 'next/dynamic';
 import LoadingEye from '@/src/components/LoadingEye';
 import { useAuth } from '@/src/contexts/AuthContext';
 
+// Cloudflare Pages requires dynamic routes to use the Edge Runtime
+export const runtime = 'edge';
+
 const ChatsPage = dynamic(() => import('@/src/views/ChatsPage'), {
     loading: () => <div className="flex justify-center py-20"><LoadingEye /></div>,
     ssr: false
