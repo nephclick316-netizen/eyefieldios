@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mail, Lock, ChevronRight, AlertCircle, Eye } from 'lucide-react';
+import { Mail, Lock, ChevronRight, AlertCircle, Eye, Settings } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { withTimeout } from '../utils/queryUtils';
 
@@ -29,6 +29,13 @@ const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onGoToSignUp }) => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isMounted.current) return;
+    
+    // Check if Supabase is configured
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      setError("System Configuration Missing: Please set your Supabase environment variables in Cloudflare and redeploy.");
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -49,8 +56,14 @@ const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onGoToSignUp }) => {
         if (isMounted.current) onSignIn();
       }
     } catch (err: any) {
-      if (isMounted.current) setError(err.message);
-      if (isMounted.current) setLoading(false);
+      if (isMounted.current) {
+        if (err.message?.includes('fetch')) {
+          setError("Connection Failed: The app cannot reach Supabase. Check your URL and API keys in Cloudflare.");
+        } else {
+          setError(err.message);
+        }
+        setLoading(false);
+      }
     }
   };
 
@@ -216,8 +229,9 @@ const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onGoToSignUp }) => {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-xl">
-                <p className="text-[10px] font-black uppercase text-red-500 tracking-widest text-center">{error}</p>
+              <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-2xl flex items-start gap-3">
+                <AlertCircle size={18} className="text-red-500 shrink-0 mt-0.5" />
+                <p className="text-[10px] font-black uppercase text-red-500 tracking-widest leading-relaxed">{error}</p>
               </div>
             )}
 
