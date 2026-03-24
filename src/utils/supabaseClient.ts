@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0YXpnZGlqcmJtYmtyZ2NidWFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3OTk4NzcsImV4cCI6MjA4NzM3NTg3N30.tjT66l6HsHsxa3UpRL1EQNRM_S-unJu-Gxs0ikrC7U4placeholder";
 
 // Log status to console for debugging (only in development or if placeholders are detected)
 if (typeof window !== 'undefined' && SUPABASE_URL.includes('placeholder')) {
