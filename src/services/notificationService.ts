@@ -81,8 +81,13 @@ export const notificationService = {
     );
 
     if (error) {
-      // Always log so developers can see failures in the browser console.
-      console.error("Failed to create notification:", error);
+      // Log detailed error information to help diagnose RLS or schema issues
+      console.error("🚨 Notification Error:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
     }
   },
 
