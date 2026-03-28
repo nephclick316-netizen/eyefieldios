@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: "EyeField",
   description: "A premium all-in-one social and e-commerce platform",
   icons: {
-    icon: '/Logo-icon.jpg',
-    apple: '/Logo-icon.jpg',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   }
 };
 
