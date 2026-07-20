@@ -1,0 +1,9 @@
+{
+  "name": "EyeField",
+  "description": "A premium all-in-one social and e-commerce platform blending the best of Instagram, WhatsApp, Reddit, and high-end shopping.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
