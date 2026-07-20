@@ -1,0 +1,143 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+const resources = {
+  en: {
+    translation: {
+      "nav.home": "Cascadea",
+      "nav.echo": "Echoes",
+      "nav.chat": "Chats",
+      "nav.profile": "Profile",
+      "nav.calls": "Calls",
+      "nav.settings": "Settings",
+      "auth.login": "Login",
+      "auth.signup": "Sign Up",
+      "auth.google": "Continue with Google",
+      "shop.upload": "Upload Product",
+      "shop.images": "Images (Max 3)",
+      "shop.video": "Video Mockup",
+      "social.status": "Status",
+      "social.feed": "Feed",
+      "shop.search_placeholder": "Search products...",
+      "shop.new_products": "New Products",
+      "shop.visual_results": "Visual Search Results",
+      "shop.view_all": "View All",
+      "shop.no_products": "No products found",
+      "shop.try_adjusting": "Try adjusting your search or filters",
+    },
+  },
+  fr: {
+    translation: {
+      "nav.home": "Cascadea",
+      "nav.echo": "Echoes",
+      "nav.chat": "Chats",
+      "nav.profile": "Profil",
+      "nav.calls": "Appels",
+      "nav.settings": "Paramètres",
+      "auth.login": "Connexion",
+      "auth.signup": "S'inscrire",
+      "auth.google": "Continuer avec Google",
+      "shop.upload": "Télécharger le produit",
+      "shop.images": "Images (Max 3)",
+      "shop.video": "Maquette vidéo",
+      "social.status": "Statut",
+      "social.feed": "Fil d'actualité",
+      "shop.search_placeholder": "Rechercher des produits...",
+      "shop.new_products": "Nouveaux produits",
+      "shop.visual_results": "Résultats de la recherche visuelle",
+      "shop.view_all": "Voir tout",
+      "shop.no_products": "Aucun produit trouvé",
+      "shop.try_adjusting": "Essayez d'ajuster votre recherche ou vos filtres",
+    },
+  },
+  ar: {
+    translation: {
+      "nav.home": "كاسكاديا",
+      "nav.echo": "إيكوز",
+      "nav.chat": "دردشات",
+      "nav.profile": "الملف الشخصي",
+      "nav.calls": "المكالمات",
+      "nav.settings": "الإعدادات",
+      "auth.login": "تسجيل الدخول",
+      "auth.signup": "إنشاء حساب",
+      "auth.google": "المتابعة باستخدام جوجل",
+      "shop.upload": "رفع منتج",
+      "shop.images": "صور (بحد أقصى 3)",
+      "shop.video": "فيديو تجريبي",
+      "social.status": "الحالة",
+      "social.feed": "الموجز",
+      "shop.search_placeholder": "البحث عن المنتجات...",
+      "shop.new_products": "منتجات جديدة",
+      "shop.visual_results": "نتائج البحث المرئي",
+      "shop.view_all": "عرض الكل",
+      "shop.no_products": "لم يتم العثور على منتجات",
+      "shop.try_adjusting": "حاول تعديل البحث أو الفلاتر",
+    },
+  },
+  es: {
+    translation: {
+      "nav.home": "Cascadea",
+      "nav.echo": "Echoes",
+      "nav.chat": "Chats",
+      "nav.profile": "Perfil",
+      "nav.calls": "Llamadas",
+      "nav.settings": "Ajustes",
+      "auth.login": "Iniciar sesión",
+      "auth.signup": "Registrarse",
+      "auth.google": "Continuar con Google",
+      "shop.upload": "Subir producto",
+      "shop.images": "Imágenes (Máx 3)",
+      "shop.video": "Maqueta de video",
+      "social.status": "Estado",
+      "social.feed": "Feed",
+      "shop.search_placeholder": "Buscar productos...",
+      "shop.new_products": "Nuevos productos",
+      "shop.visual_results": "Resultados de búsqueda visual",
+      "shop.view_all": "Ver todo",
+      "shop.no_products": "No se encontraron productos",
+      "shop.try_adjusting": "Intenta ajustar tu búsqueda o filtros",
+    },
+  },
+  sw: {
+    translation: {
+      "nav.home": "Cascadea",
+      "nav.echo": "Mwangwi",
+      "nav.chat": "Mazungumzo",
+      "nav.profile": "Wasifu",
+      "nav.calls": "Simu",
+      "nav.settings": "Mipangilio",
+      "auth.login": "Ingia",
+      "auth.signup": "Jisajili",
+      "auth.google": "Endelea na Google",
+      "shop.upload": "Pakia Bidhaa",
+      "shop.images": "Picha (Zisizozidi 3)",
+      "shop.video": "Video ya Bidhaa",
+      "social.status": "Hali",
+      "social.feed": "Mlisho",
+      "shop.search_placeholder": "Tafuta bidhaa...",
+      "shop.new_products": "Bidhaa Mpya",
+      "shop.visual_results": "Matokeo ya Utafutaji wa Picha",
+      "shop.view_all": "Tazama Zote",
+      "shop.no_products": "Hakuna bidhaa zilizopatikana",
+      "shop.try_adjusting": "Jaribu kurekebisha utafutaji au vichujio",
+    },
+  },
+};
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false, // react already safes from xss
+    },
+    detection: {
+      order: ["querystring", "cookie", "localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage", "cookie"],
+    },
+  });
+
+export default i18n;
