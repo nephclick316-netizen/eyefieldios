@@ -1,0 +1,171 @@
+workflows:
+
+  # ══════════════════════════════════════════════════════════════════
+  #  iOS Workflow  –  builds a signed IPA for App Store / TestFlight
+  #
+  #  BEFORE YOUR FIRST BUILD, go to Codemagic → Teams → Code signing
+  #  and add:
+  #    1. iOS Distribution certificate  (.p12 + password)
+  #    2. App Store provisioning profile for com.nephclick.eyefield
+  #  Then set CM_TEAM_ID in Teams → Global variables (your 10-char
+  #  Apple Developer Team ID, e.g.  ABCD123456).
+  # ══════════════════════════════════════════════════════════════════
+  ios-workflow:
+    name: EyeField iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2        # required for Xcode / iOS builds
+
+    environment:
+      xcode: 16.2                     # matches LastUpgradeCheck in project.pbxproj
+      java: 17                        # Gradle / KMP toolchain
+
+      # Codemagic uses this to auto-install the cert + provisioning profile
+      # before Xcode runs. Make sure bundle_identifier matches Config.xcconfig.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.nephclick.eyefield
+
+      vars:
+        XCODE_PROJECT: "iosApp/iosApp.xcodeproj"
+        XCODE_SCHEME:  "iosApp"
+        # CM_TEAM_ID must be set as a global/team variable in Codemagic UI.
+        # It is your 10-character Apple Developer Team ID (e.g. ABCD123456).
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
+    scripts:
+      # ── 1. Fix Gradle executable bit (git on Windows strips it) ───────────
+      - name: Make gradlew executable
+        script: chmod +x "$CM_BUILD_DIR/gradlew"
+
+      # ── 2. Inject Team ID into xcconfig ───────────────────────────────────
+      #  Config.xcconfig has TEAM_ID= blank for safety.
+      #  Codemagic exposes $CM_TEAM_ID from the ios_signing cert.
+      - name: Patch TEAM_ID into Config.xcconfig
+        script: |
+          set -e
+          XCCONFIG="$CM_BUILD_DIR/iosApp/Configuration/Config.xcconfig"
+          echo "--- Before patch ---"
+          cat "$XCCONFIG"
+          # Replace the TEAM_ID= line with the actual team ID
+          sed -i '' "s|^TEAM_ID=.*|TEAM_ID=$CM_TEAM_ID|" "$XCCONFIG"
+          echo "--- After patch ---"
+          cat "$XCCONFIG"
+
+      # ── 3. Archive and export IPA ──────────────────────────────────────────
+      #  xcode-project build-ipa triggers xcodebuild archive + export.
+      #  During the Xcode "Compile Kotlin Framework" build phase, Xcode
+      #  automatically calls: ./gradlew :sharedUI:embedAndSignAppleFrameworkForXcode
+      #  so we do NOT need a separate Gradle step here.
+      - name: Build & export IPA
+        script: |
+          set -e
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme  "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      # ── Uncomment to publish to TestFlight automatically ─────────────────
+      # app_store_connect:
+      #   api_key:   $APP_STORE_CONNECT_PRIVATE_KEY       # contents of .p8 file
+      #   key_id:    $APP_STORE_CONNECT_KEY_IDENTIFIER    # 10-char key ID
+      #   issuer_id: $APP_STORE_CONNECT_ISSUER_ID         # UUID from App Store Connect
+      #   submit_to_testflight: true
+      email:
+        recipients:
+          - nephclickx@gmail.com
+        notify:
+          success: true
+          failure: true
+
+
+  # ══════════════════════════════════════════════════════════════════
+  #  Android Workflow  –  builds signed APK + AAB (release)
+  #
+  #  The in-repo keystore (androidApp/release-key.jks) is used by
+  #  default. Codemagic's android_signing overrides it with the
+  #  keystore you upload in Teams → Code signing → Android keystores.
+  #  Name the keystore entry "eyefield_release" in Codemagic UI.
+  # ══════════════════════════════════════════════════════════════════
+  android-workflow:
+    name: EyeField Android Build
+    max_build_duration: 60
+    instance_type: linux_x2           # fast Linux runner for Android
+
+    environment:
+      java: 17
+      # Upload your release-key.jks in Codemagic UI and name it "eyefield_release".
+      # Codemagic then sets CM_KEYSTORE_PATH, CM_KEYSTORE_PASSWORD,
+      # CM_KEY_ALIAS, and CM_KEY_PASSWORD automatically.
+      android_signing:
+        - eyefield_release
+
+      vars:
+        PACKAGE_NAME: "com.nephclick.eyefield"
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
+    scripts:
+      # ── 1. Fix Gradle executable bit ──────────────────────────────────────
+      - name: Make gradlew executable
+        script: chmod +x gradlew
+
+      # ── 2. Build signed release APK ───────────────────────────────────────
+      - name: Build release APK
+        script: |
+          set -e
+          ./gradlew :androidApp:assembleRelease \
+            -Pandroid.injected.signing.store.file="$CM_KEYSTORE_PATH" \
+            -Pandroid.injected.signing.store.password="$CM_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$CM_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$CM_KEY_PASSWORD"
+
+      # ── 3. Build signed release AAB (for Google Play) ─────────────────────
+      - name: Build release AAB
+        script: |
+          set -e
+          ./gradlew :androidApp:bundleRelease \
+            -Pandroid.injected.signing.store.file="$CM_KEYSTORE_PATH" \
+            -Pandroid.injected.signing.store.password="$CM_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$CM_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$CM_KEY_PASSWORD"
+
+    artifacts:
+      # Signed APK (sideloading / direct distribution)
+      - androidApp/build/outputs/apk/release/*.apk
+      # Signed AAB (Google Play Store upload)
+      - androidApp/build/outputs/bundle/release/*.aab
+      # ProGuard mapping (for crash de-obfuscation in Play Console)
+      - androidApp/build/outputs/mapping/release/mapping.txt
+
+    publishing:
+      # ── Uncomment to publish to Google Play internal track automatically ──
+      # google_play:
+      #   credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+      #   track: internal
+      #   submit_as_draft: true
+      email:
+        recipients:
+          - nephclickx@gmail.com
+        notify:
+          success: true
+          failure: true

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="slogan">MTANDAO WA KIJAMII UNAKUTANA NA E-SHOP WEKA POST ZAKO NA UNUNUE NA KUUZA BIDHAA ZAKO KWA URAHISI</string>
+    <string name="how_we_use_google">JINSI TUNAVYOTUMIA AKAUNTI YAKO YA GOOGLE</string>
+    <string name="login_tab">Ingia</string>
+    <string name="signup_tab">Jisajili</string>
+    <string name="email_address">BARUA PEPE</string>
+    <string name="email_placeholder">jina@mfano.com</string>
+    <string name="password">NENO SIRI</string>
+    <string name="password_placeholder">••••••••</string>
+    <string name="forgot_password">Umesahau?</string>
+    <string name="login_button">Ingia</string>
+    <string name="signup_button">Jisajili</string>
+    <string name="or_continue_with">AU ENDELEA NA</string>
+    <string name="continue_with_google">Endelea na Google</string>
+    <string name="terms_prefix">Kwa kuingia, unakubaliana na </string>
+    <string name="terms">Masharti</string>
+    <string name="terms_and"> na </string>
+    <string name="privacy_policy">Sera ya faragha</string>
+</resources>

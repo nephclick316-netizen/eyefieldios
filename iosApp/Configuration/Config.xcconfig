@@ -1,0 +1,12 @@
+// ── Team / Signing ────────────────────────────────────────────────────────
+// TEAM_ID is left empty here; the Codemagic build script patches it at CI time.
+// For local development, paste your 10-character Apple Developer Team ID here.
+TEAM_ID=
+
+// ── App Identity ──────────────────────────────────────────────────────────
+PRODUCT_NAME=EyeField
+PRODUCT_BUNDLE_IDENTIFIER=com.nephclick.eyefield
+
+// ── Versioning (keep in sync with androidApp/build.gradle.kts) ────────────
+CURRENT_PROJECT_VERSION=17
+MARKETING_VERSION=1.0.16

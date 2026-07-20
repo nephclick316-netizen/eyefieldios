@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "932057557546",
+    "project_id": "eyefield-38de6",
+    "storage_bucket": "eyefield-38de6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932057557546:android:aa5b34a122a865c825b153",
+        "android_client_info": {
+          "package_name": "com.nephclick.eyefield"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtCk8QP4uioI4tFnBDbGo09GVJX4IpSgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
