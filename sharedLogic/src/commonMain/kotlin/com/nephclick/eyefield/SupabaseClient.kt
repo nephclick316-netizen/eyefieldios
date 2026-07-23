@@ -5,7 +5,6 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.postgrest.Postgrest
-import kotlinx.datetime.Clock
 
 import com.nephclick.eyefield.models.Profile
 import com.nephclick.eyefield.models.Business
@@ -796,7 +795,7 @@ object Supabase {
 
     // ===== CALLS =====
     fun generateChannelName(callerId: String, receiverId: String): String {
-        val timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        val timestamp = io.ktor.util.date.getTimeMillis()
         return "call_${callerId.take(8)}_${receiverId.take(8)}_$timestamp"
     }
 
@@ -914,7 +913,8 @@ object Supabase {
                 header("apikey", anonKey)
                 header("Prefer", "resolution=merge-duplicates")
                 contentType(ContentType.Application.Json)
-                setBody("""{"user_id":"$userId","fcm_token":"$fcmToken","updated_at":"${kotlinx.datetime.Clock.System.now()}"}""")
+                val nowIso = io.ktor.util.date.GMTDate().let { "${it.year}-${(it.month.ordinal + 1).toString().padStart(2, '0')}-${it.dayOfMonth.toString().padStart(2, '0')}T${it.hours.toString().padStart(2, '0')}:${it.minutes.toString().padStart(2, '0')}:${it.seconds.toString().padStart(2, '0')}Z" }
+                setBody("""{"user_id":"$userId","fcm_token":"$fcmToken","updated_at":"$nowIso"}""")
             }
             println("saveFcmToken status: ${response.status}")
         } catch (e: Exception) {
@@ -1018,7 +1018,8 @@ object Supabase {
 
     suspend fun updateLastSeen(userId: String) {
         try {
-            client.postgrest["profiles"].update({ set("last_seen", kotlinx.datetime.Clock.System.now().toString()) }) { filter { eq("id", userId) } }
+            val nowIso = io.ktor.util.date.GMTDate().let { "${it.year}-${(it.month.ordinal + 1).toString().padStart(2, '0')}-${it.dayOfMonth.toString().padStart(2, '0')}T${it.hours.toString().padStart(2, '0')}:${it.minutes.toString().padStart(2, '0')}:${it.seconds.toString().padStart(2, '0')}Z" }
+            client.postgrest["profiles"].update({ set("last_seen", nowIso) }) { filter { eq("id", userId) } }
         } catch(e: Exception) {}
     }
 

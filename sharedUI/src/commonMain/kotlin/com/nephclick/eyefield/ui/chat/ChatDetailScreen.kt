@@ -28,9 +28,6 @@ import com.nephclick.eyefield.models.ChatMessage
 import com.nephclick.eyefield.models.Profile
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 import eyefield.sharedui.generated.resources.Res
 import eyefield.sharedui.generated.resources.*

@@ -49,9 +49,6 @@ import com.nephclick.eyefield.ui.profile.ProfileScreen
 import eyefield.sharedui.generated.resources.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.plus
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearEasing
