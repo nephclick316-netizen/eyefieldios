@@ -18,9 +18,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+// Removed java.time imports
 import com.nephclick.eyefield.ui.main.MainScreen
 import com.nephclick.eyefield.ui.home.LocalPlatformContext
 import com.nephclick.eyefield.Supabase
@@ -406,8 +404,7 @@ class OnboardingScreen(val userEmail: String = "user@example.com") : Screen {
                                     TextButton(onClick = {
                                         showDatePicker = false
                                         datePickerState.selectedDateMillis?.let { millis ->
-                                            val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
-                                            dob = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+                                            dob = com.nephclick.eyefield.utils.formatEpochToIsoDate(millis)
                                         }
                                     }) { Text(stringResource(Res.string.ok)) }
                                 },

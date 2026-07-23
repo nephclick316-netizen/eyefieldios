@@ -51,10 +51,10 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                     try {
                         val lastSeen = otherUser.lastSeen
                         if (lastSeen != null) {
-                            val lastSeenTime = kotlinx.datetime.Instant.parse(lastSeen)
-                            val now = kotlinx.datetime.Clock.System.now()
+                            val lastSeenTime = lastSeen.toLongOrNull() ?: 0L
+                            val now = com.nephclick.eyefield.utils.getCurrentTimeMillis()
                             val diff = now - lastSeenTime
-                            diff.inWholeMinutes <= 5
+                            (diff / 60000) <= 5
                         } else false
                     } catch (e: Exception) { false }
                 } else false
@@ -121,7 +121,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                 scope.launch {
                     try {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = true }
-                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                             val compressed = com.nephclick.eyefield.utils.compressImage(bytes)
                             com.nephclick.eyefield.utils.R2Uploader.uploadMedia(compressed, "chat", "image/jpeg", "jpg") { sent, total ->
                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
@@ -133,7 +133,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                             senderId = currentUserId,
                             text = "Image Attachment",
                             mediaUrl = url,
-                            createdAt = kotlinx.datetime.Clock.System.now().toString()
+                            createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
                         )
                         messages = messages + newImageMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newImageMsg)
@@ -153,13 +153,13 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                 scope.launch {
                     try {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = true }
-                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                             com.nephclick.eyefield.utils.R2Uploader.uploadMedia(bytes, "chat", "video/mp4", ext) { sent, total ->
                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { chatUploadProgress = pct } }
                             }
                         }
-                        val newVideoMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Video Attachment", mediaUrl = url, createdAt = kotlinx.datetime.Clock.System.now().toString())
+                        val newVideoMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Video Attachment", mediaUrl = url, createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString())
                         messages = messages + newVideoMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newVideoMsg)
                     } catch(e: Exception) { println("Upload failed: ${e.message}") } finally { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = false } }
@@ -174,13 +174,13 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                 scope.launch {
                     try {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = true }
-                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                             com.nephclick.eyefield.utils.R2Uploader.uploadMedia(bytes, "chat", type, ext) { sent, total ->
                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { chatUploadProgress = pct } }
                             }
                         }
-                        val newDocMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Document Attachment", mediaUrl = url, createdAt = kotlinx.datetime.Clock.System.now().toString())
+                        val newDocMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Document Attachment", mediaUrl = url, createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString())
                         messages = messages + newDocMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newDocMsg)
                     } catch(e: Exception) { println("Upload failed: ${e.message}") } finally { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = false } }
@@ -398,7 +398,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                                     roomId = roomId,
                                                     senderId = currentUserId,
                                                     text = finalMessageText,
-                                                    createdAt = kotlinx.datetime.Clock.System.now().toString()
+                                                    createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
                                                 )
                                                 messages = messages + newMessage
                                                 com.nephclick.eyefield.Supabase.sendMessage(newMessage)
@@ -427,7 +427,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                                                 senderId = currentUserId,
                                                                 text = "Field Voice Note",
                                                                 mediaUrl = url,
-                                                                createdAt = kotlinx.datetime.Clock.System.now().toString()
+                                                                createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
                                                             )
                                                             messages = messages + newVoiceNote
                                                             com.nephclick.eyefield.Supabase.sendMessage(newVoiceNote)

@@ -1,0 +1,404 @@
+﻿2026-07-23T21:10:07.4117050Z Current runner version: '2.335.1'
+2026-07-23T21:10:07.4132890Z ##[group]Runner Image Provisioner
+2026-07-23T21:10:07.4133490Z Hosted Compute Agent
+2026-07-23T21:10:07.4133850Z Version: 20260707.563
+2026-07-23T21:10:07.4134320Z Commit: 02667638d2b423fbc733a8e32a88b44996a3ba6e
+2026-07-23T21:10:07.4134910Z Build Date: 2026-07-07T19:33:50Z
+2026-07-23T21:10:07.4135450Z Worker ID: {2393587f-9298-4851-b471-e3946eab2f59}
+2026-07-23T21:10:07.4135930Z Azure Region: westus
+2026-07-23T21:10:07.4136370Z ##[endgroup]
+2026-07-23T21:10:07.4137370Z ##[group]Operating System
+2026-07-23T21:10:07.4137900Z macOS
+2026-07-23T21:10:07.4138230Z 26.4
+2026-07-23T21:10:07.4138580Z 25E246
+2026-07-23T21:10:07.4138910Z ##[endgroup]
+2026-07-23T21:10:07.4139270Z ##[group]Runner Image
+2026-07-23T21:10:07.4139760Z Image: macos-26-arm64
+2026-07-23T21:10:07.4140620Z Version: 20260715.0248.1
+2026-07-23T21:10:07.4146930Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20260715.0248/images/macos/macos-26-arm64-Readme.md
+2026-07-23T21:10:07.4148170Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20260715.0248
+2026-07-23T21:10:07.4149350Z ##[endgroup]
+2026-07-23T21:10:07.4150350Z ##[group]GITHUB_TOKEN Permissions
+2026-07-23T21:10:07.4151570Z Contents: read
+2026-07-23T21:10:07.4152320Z Metadata: read
+2026-07-23T21:10:07.4152670Z Packages: read
+2026-07-23T21:10:07.4153170Z ##[endgroup]
+2026-07-23T21:10:07.4154780Z Secret source: Actions
+2026-07-23T21:10:07.4155310Z Prepare workflow directory
+2026-07-23T21:10:07.4359620Z Prepare all required actions
+2026-07-23T21:10:07.4383910Z Getting action download info
+2026-07-23T21:10:07.7341770Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-07-23T21:10:08.5446440Z Download action repository 'actions/setup-java@v4' (SHA:c1e323688fd81a25caa38c78aa6df2d33d3e20d9)
+2026-07-23T21:10:09.3203730Z Download action repository 'gradle/actions@v4' (SHA:ed408507eac070d1f99cc633dbcf757c94c7933a)
+2026-07-23T21:10:10.5293140Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-07-23T21:10:10.8048920Z Complete job name: build
+2026-07-23T21:10:10.8480370Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:10:10.8486350Z ##[group]Run actions/checkout@v4
+2026-07-23T21:10:10.8486720Z with:
+2026-07-23T21:10:10.8487010Z   repository: eyefieldholybusiness-sketch/Eyefield_ios_app
+2026-07-23T21:10:10.8489220Z   token: ***
+2026-07-23T21:10:10.8489440Z   ssh-strict: true
+2026-07-23T21:10:10.8489670Z   ssh-user: git
+2026-07-23T21:10:10.8489900Z   persist-credentials: true
+2026-07-23T21:10:10.8490150Z   clean: true
+2026-07-23T21:10:10.8490380Z   sparse-checkout-cone-mode: true
+2026-07-23T21:10:10.8490730Z   fetch-depth: 1
+2026-07-23T21:10:10.8490960Z   fetch-tags: false
+2026-07-23T21:10:10.8491200Z   show-progress: true
+2026-07-23T21:10:10.8491420Z   lfs: false
+2026-07-23T21:10:10.8491660Z   submodules: false
+2026-07-23T21:10:10.8491900Z   set-safe-directory: true
+2026-07-23T21:10:10.8492170Z   allow-unsafe-pr-checkout: false
+2026-07-23T21:10:10.8492550Z ##[endgroup]
+2026-07-23T21:10:11.5450020Z Syncing repository: eyefieldholybusiness-sketch/Eyefield_ios_app
+2026-07-23T21:10:11.5451370Z ##[group]Getting Git version info
+2026-07-23T21:10:11.5451800Z Working directory is '/Users/runner/work/Eyefield_ios_app/Eyefield_ios_app'
+2026-07-23T21:10:11.5452340Z [command]/opt/homebrew/bin/git version
+2026-07-23T21:10:11.6211300Z git version 2.55.0
+2026-07-23T21:10:11.6217520Z ##[endgroup]
+2026-07-23T21:10:11.6226320Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/84eb6735-4381-421e-938d-d9abbc61b8e9/.gitconfig'
+2026-07-23T21:10:11.6243750Z Temporarily overriding HOME='/Users/runner/work/_temp/84eb6735-4381-421e-938d-d9abbc61b8e9' before making global git config changes
+2026-07-23T21:10:11.6247560Z Adding repository directory to the temporary git global config as a safe directory
+2026-07-23T21:10:11.6307570Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app
+2026-07-23T21:10:11.6411780Z Deleting the contents of '/Users/runner/work/Eyefield_ios_app/Eyefield_ios_app'
+2026-07-23T21:10:11.6415210Z ##[group]Initializing the repository
+2026-07-23T21:10:11.6419380Z [command]/opt/homebrew/bin/git init /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app
+2026-07-23T21:10:11.6894660Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-07-23T21:10:11.6895780Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-07-23T21:10:11.6898820Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-07-23T21:10:11.6899650Z hint: call:
+2026-07-23T21:10:11.6901670Z hint:
+2026-07-23T21:10:11.6902530Z hint: 	git config --global init.defaultBranch <name>
+2026-07-23T21:10:11.6902870Z hint:
+2026-07-23T21:10:11.6903900Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-07-23T21:10:11.6904520Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-07-23T21:10:11.6904860Z hint:
+2026-07-23T21:10:11.6905060Z hint: 	git branch -m <name>
+2026-07-23T21:10:11.6905270Z hint:
+2026-07-23T21:10:11.6905610Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-07-23T21:10:11.6906330Z Initialized empty Git repository in /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app/.git/
+2026-07-23T21:10:11.6908010Z [command]/opt/homebrew/bin/git remote add origin https://github.com/eyefieldholybusiness-sketch/Eyefield_ios_app
+2026-07-23T21:10:11.7052900Z ##[endgroup]
+2026-07-23T21:10:11.7055450Z ##[group]Disabling automatic garbage collection
+2026-07-23T21:10:11.7055950Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-07-23T21:10:11.7341960Z ##[endgroup]
+2026-07-23T21:10:11.7398660Z ##[group]Setting up auth
+2026-07-23T21:10:11.7428020Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-07-23T21:10:11.7572990Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-07-23T21:10:11.8703210Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-07-23T21:10:11.8798430Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-07-23T21:10:12.1124550Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-07-23T21:10:12.1138330Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-07-23T21:10:12.3465100Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-07-23T21:10:12.3771350Z ##[endgroup]
+2026-07-23T21:10:12.3823700Z ##[group]Fetching the repository
+2026-07-23T21:10:12.3838170Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9463c2386cab6b2163269dd4135765c94a0a1c8f:refs/remotes/origin/main
+2026-07-23T21:10:13.4355180Z From https://github.com/eyefieldholybusiness-sketch/Eyefield_ios_app
+2026-07-23T21:10:13.4457030Z  * [new ref]         9463c2386cab6b2163269dd4135765c94a0a1c8f -> origin/main
+2026-07-23T21:10:13.4560300Z ##[endgroup]
+2026-07-23T21:10:13.4561590Z ##[group]Determining the checkout info
+2026-07-23T21:10:13.4563350Z ##[endgroup]
+2026-07-23T21:10:13.4565880Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-07-23T21:10:13.4578490Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-07-23T21:10:13.4579800Z ##[group]Checking out the ref
+2026-07-23T21:10:13.4580350Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-07-23T21:10:13.6745650Z Switched to a new branch 'main'
+2026-07-23T21:10:13.6767910Z branch 'main' set up to track 'origin/main'.
+2026-07-23T21:10:13.6817600Z ##[endgroup]
+2026-07-23T21:10:13.6926840Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-07-23T21:10:13.7029090Z 9463c2386cab6b2163269dd4135765c94a0a1c8f
+2026-07-23T21:10:13.7519330Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:10:13.7521080Z ##[group]Run actions/setup-java@v4
+2026-07-23T21:10:13.7521300Z with:
+2026-07-23T21:10:13.7521450Z   distribution: zulu
+2026-07-23T21:10:13.7521610Z   java-version: 17
+2026-07-23T21:10:13.7521770Z   java-package: jdk
+2026-07-23T21:10:13.7521930Z   check-latest: false
+2026-07-23T21:10:13.7522100Z   server-id: github
+2026-07-23T21:10:13.7522290Z   server-username: GITHUB_ACTOR
+2026-07-23T21:10:13.7522530Z   server-password: GITHUB_TOKEN
+2026-07-23T21:10:13.7522920Z   overwrite-settings: true
+2026-07-23T21:10:13.7523140Z   job-status: success
+2026-07-23T21:10:13.7525250Z   token: ***
+2026-07-23T21:10:13.7525420Z ##[endgroup]
+2026-07-23T21:10:13.9690090Z ##[group]Installed distributions
+2026-07-23T21:10:13.9732650Z Trying to resolve the latest version from remote
+2026-07-23T21:10:14.0008870Z (node:2035) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-07-23T21:10:14.0012740Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-07-23T21:10:14.1299280Z Resolved latest version as 17.0.20+8
+2026-07-23T21:10:14.1300350Z Trying to download...
+2026-07-23T21:10:14.1301420Z Downloading Java 17.0.20+8 (Zulu) from https://cdn.azul.com/zulu/bin/zulu17.68.17-ca-jdk17.0.20-macosx_aarch64.tar.gz ...
+2026-07-23T21:10:18.0407920Z Extracting Java archive...
+2026-07-23T21:10:18.0700120Z [command]/usr/bin/tar xz -C /Users/runner/work/_temp/098ee495-7c67-413f-8d43-458658cebb9f -f /Users/runner/work/_temp/9fc3a225-526c-4a65-9a02-2ec881ddceec
+2026-07-23T21:10:20.1069200Z Java 17.0.20+8 was downloaded
+2026-07-23T21:10:20.1076770Z Setting Java 17.0.20+8 as the default
+2026-07-23T21:10:20.1084790Z Creating toolchains.xml for JDK version 17 from zulu
+2026-07-23T21:10:20.1171220Z Writing to /Users/runner/.m2/toolchains.xml
+2026-07-23T21:10:20.1171800Z 
+2026-07-23T21:10:20.1172090Z Java configuration:
+2026-07-23T21:10:20.1172430Z   Distribution: zulu
+2026-07-23T21:10:20.1173590Z   Version: 17.0.20+8
+2026-07-23T21:10:20.1175830Z   Path: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:20.1176980Z 
+2026-07-23T21:10:20.1178090Z ##[endgroup]
+2026-07-23T21:10:20.1294540Z Creating settings.xml with server-id: github
+2026-07-23T21:10:20.1295040Z Writing to /Users/runner/.m2/settings.xml
+2026-07-23T21:10:20.1688000Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:10:20.1691770Z ##[group]Run gradle/actions/setup-gradle@v4
+2026-07-23T21:10:20.1692810Z with:
+2026-07-23T21:10:20.1694700Z   cache-disabled: false
+2026-07-23T21:10:20.1695580Z   cache-read-only: false
+2026-07-23T21:10:20.1697570Z   cache-write-only: false
+2026-07-23T21:10:20.1697870Z   cache-overwrite-existing: false
+2026-07-23T21:10:20.1698830Z   cache-cleanup: on-success
+2026-07-23T21:10:20.1699220Z   gradle-home-cache-includes: caches
+notifications
+
+2026-07-23T21:10:20.1716400Z   add-job-summary: always
+2026-07-23T21:10:20.1717380Z   add-job-summary-as-pr-comment: never
+2026-07-23T21:10:20.1717860Z   dependency-graph: disabled
+2026-07-23T21:10:20.1718910Z   dependency-graph-report-dir: dependency-graph-reports
+2026-07-23T21:10:20.1719290Z   dependency-graph-continue-on-failure: true
+2026-07-23T21:10:20.1719650Z   build-scan-publish: false
+2026-07-23T21:10:20.1719910Z   validate-wrappers: true
+2026-07-23T21:10:20.1720280Z   allow-snapshot-wrappers: false
+2026-07-23T21:10:20.1720580Z   gradle-home-cache-strict-match: false
+2026-07-23T21:10:20.1721020Z   workflow-job-context: null
+2026-07-23T21:10:20.1723340Z   github-token: ***
+2026-07-23T21:10:20.1723630Z env:
+2026-07-23T21:10:20.1723950Z   JAVA_HOME: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:20.1724560Z   JAVA_HOME_17_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:20.1724990Z ##[endgroup]
+2026-07-23T21:10:20.8501210Z Gradle User Home already exists at /Users/runner/.gradle
+2026-07-23T21:10:20.8585740Z Merged default JDK locations into /Users/runner/.m2/toolchains.xml
+2026-07-23T21:10:20.8586910Z Preparing cache for cleanup.
+2026-07-23T21:10:20.8606340Z ##[group]Restore Gradle state from cache
+2026-07-23T21:10:21.0616200Z Cache hit for: gradle-home-v1|macOS-ARM64|build[7065ae85df05caed635ee85319bbb27e]-9463c2386cab6b2163269dd4135765c94a0a1c8f
+2026-07-23T21:10:21.7771440Z Received 1971026 of 1971026 (100.0%), 3.5 MBs/sec
+2026-07-23T21:10:21.7793650Z Cache Size: ~2 MB (1971026 B)
+2026-07-23T21:10:21.7848940Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/c5b77054-1f50-4515-915b-a1e361f4a28b/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:22.6404710Z Cache restored successfully
+2026-07-23T21:10:22.6510020Z Restored cache entry with key gradle-home-v1|macOS-ARM64|build[7065ae85df05caed635ee85319bbb27e]-9463c2386cab6b2163269dd4135765c94a0a1c8f to /Users/runner/.gradle/caches,/Users/runner/.gradle/notifications,/Users/runner/.gradle/.setup-gradle in 1770ms
+2026-07-23T21:10:22.8569790Z Cache hit for: gradle-dependencies-v1-82c57d30a578187ee20ee2284936636d
+2026-07-23T21:10:22.9506640Z Cache hit for: gradle-generated-gradle-jars-v1-8ae09625009e808ae7ed926e39624fd3
+2026-07-23T21:10:22.9511390Z Cache hit for: gradle-transforms-v1-4b6d72cc35ba1d9d1ea1449efa077f3f
+2026-07-23T21:10:22.9517000Z Cache hit for: gradle-wrapper-zips-v1-511d710227dd87ed615189e24c183c87
+2026-07-23T21:10:22.9521200Z Cache hit for: gradle-java-toolchains-v1-4a805c2bbf1205b60921084c676c9f66
+2026-07-23T21:10:22.9523460Z Cache hit for: gradle-instrumented-jars-v1-889b234b4c0ec79a1ed3fe9953ba6c0e
+2026-07-23T21:10:22.9526030Z Cache hit for: gradle-groovy-dsl-v1-4d7f98b0a03a457bb1207526d4f7427e
+2026-07-23T21:10:22.9532570Z Cache hit for: gradle-kotlin-dsl-v1-31e0c95ebba741708b0c5558ea917d20
+2026-07-23T21:10:23.2025200Z Received 91331 of 91331 (100.0%), 0.5 MBs/sec
+2026-07-23T21:10:23.2131300Z Cache Size: ~0 MB (91331 B)
+2026-07-23T21:10:23.2239370Z Received 215496 of 215496 (100.0%), 1.1 MBs/sec
+2026-07-23T21:10:23.2344680Z Cache Size: ~0 MB (215496 B)
+2026-07-23T21:10:23.2688620Z Received 61574 of 61574 (100.0%), 0.2 MBs/sec
+2026-07-23T21:10:23.2790750Z Cache Size: ~0 MB (61574 B)
+2026-07-23T21:10:23.3305930Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/57464053-c9ca-4b8c-a861-ed0e13d8dee9/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:23.3324980Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/6251bd45-6c22-4137-9067-1328de0be5a7/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:23.3332300Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/aa3bd851-369b-417e-96d0-a05473cf8bb0/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:23.4267890Z Cache restored successfully
+2026-07-23T21:10:23.4507610Z Restored cache entry with key gradle-instrumented-jars-v1-889b234b4c0ec79a1ed3fe9953ba6c0e to /Users/runner/.gradle/caches/jars-*/*/ in 809ms
+2026-07-23T21:10:23.5040980Z Cache restored successfully
+2026-07-23T21:10:23.5447080Z Restored cache entry with key gradle-groovy-dsl-v1-4d7f98b0a03a457bb1207526d4f7427e to /Users/runner/.gradle/caches/*/groovy-dsl/*/ in 908ms
+2026-07-23T21:10:24.0904240Z Received 4194304 of 41446284 (10.1%), 3.5 MBs/sec
+2026-07-23T21:10:24.0910180Z Received 0 of 547578032 (0.0%), 0.0 MBs/sec
+2026-07-23T21:10:24.0911050Z Received 4194304 of 189691012 (2.2%), 3.6 MBs/sec
+2026-07-23T21:10:24.0911670Z Received 0 of 133880210 (0.0%), 0.0 MBs/sec
+2026-07-23T21:10:24.0912270Z Received 0 of 303563482 (0.0%), 0.0 MBs/sec
+2026-07-23T21:10:24.2275590Z Cache restored successfully
+2026-07-23T21:10:24.2683160Z Restored cache entry with key gradle-kotlin-dsl-v1-31e0c95ebba741708b0c5558ea917d20 to /Users/runner/.gradle/caches/*/kotlin-dsl/accessors/*/,/Users/runner/.gradle/caches/*/kotlin-dsl/scripts/*/ in 1634ms
+2026-07-23T21:10:24.7155290Z Received 41446284 of 41446284 (100.0%), 22.6 MBs/sec
+2026-07-23T21:10:24.7256590Z Cache Size: ~40 MB (41446284 B)
+2026-07-23T21:10:24.9961380Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/c436c7bc-a52b-432c-84c4-efb548ded84a/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:25.0915690Z Received 37748736 of 547578032 (6.9%), 17.0 MBs/sec
+2026-07-23T21:10:25.1060620Z Received 67108864 of 189691012 (35.4%), 30.5 MBs/sec
+2026-07-23T21:10:25.1165640Z Received 46137344 of 133880210 (34.5%), 21.1 MBs/sec
+2026-07-23T21:10:25.1265890Z Received 33554432 of 303563482 (11.1%), 15.4 MBs/sec
+2026-07-23T21:10:25.9888060Z Cache restored successfully
+2026-07-23T21:10:26.0895050Z Restored cache entry with key gradle-generated-gradle-jars-v1-8ae09625009e808ae7ed926e39624fd3 to /Users/runner/.gradle/caches/9.1.0/generated-gradle-jars/gradle-api-9.1.0.jar in 3452ms
+2026-07-23T21:10:26.0995620Z Received 88080384 of 547578032 (16.1%), 26.9 MBs/sec
+2026-07-23T21:10:26.1098680Z Received 125829120 of 189691012 (66.3%), 38.6 MBs/sec
+2026-07-23T21:10:26.1205790Z Received 100663296 of 133880210 (75.2%), 31.0 MBs/sec
+2026-07-23T21:10:26.1306940Z Received 62914560 of 303563482 (20.7%), 19.5 MBs/sec
+2026-07-23T21:10:26.6037890Z Received 133880210 of 133880210 (100.0%), 35.5 MBs/sec
+2026-07-23T21:10:26.6136780Z Cache Size: ~128 MB (133880210 B)
+2026-07-23T21:10:26.6473170Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/b186b72e-fb81-45df-93c3-2432388d686a/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:27.0382420Z Received 189691012 of 189691012 (100.0%), 44.7 MBs/sec
+2026-07-23T21:10:27.0520480Z Cache Size: ~181 MB (189691012 B)
+2026-07-23T21:10:27.0646720Z Cache restored successfully
+2026-07-23T21:10:27.0674790Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/6261c1cf-b4bb-48a8-9c53-4d6d41381aa4/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:27.0681110Z Restored cache entry with key gradle-wrapper-zips-v1-511d710227dd87ed615189e24c183c87 to /Users/runner/.gradle/wrapper/dists/gradle-9.1.0-bin/9agqghryom9wkf8r80qlhnts3 in 4435ms
+2026-07-23T21:10:27.1511930Z Received 134217728 of 547578032 (24.5%), 30.7 MBs/sec
+2026-07-23T21:10:27.1617100Z Received 134217728 of 303563482 (44.2%), 31.1 MBs/sec
+2026-07-23T21:10:28.1436250Z Received 234881024 of 547578032 (42.9%), 43.3 MBs/sec
+2026-07-23T21:10:28.1584700Z Received 192937984 of 303563482 (63.6%), 35.9 MBs/sec
+2026-07-23T21:10:28.4740460Z Cache restored successfully
+2026-07-23T21:10:28.4859790Z Restored cache entry with key gradle-java-toolchains-v1-4a805c2bbf1205b60921084c676c9f66 to /Users/runner/.gradle/jdks/amazon_com_inc_-21-aarch64-os_x.2 in 5853ms
+2026-07-23T21:10:29.1446150Z Received 272629760 of 547578032 (49.8%), 42.1 MBs/sec
+2026-07-23T21:10:29.1584380Z Received 268435456 of 303563482 (88.4%), 41.8 MBs/sec
+2026-07-23T21:10:29.7176060Z Received 303563482 of 303563482 (100.0%), 43.3 MBs/sec
+2026-07-23T21:10:29.7277910Z Cache Size: ~290 MB (303563482 B)
+2026-07-23T21:10:29.7484510Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/7068cd7c-041c-4207-a34d-fd877a3112ea/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:30.1435290Z Received 373293056 of 547578032 (68.2%), 49.7 MBs/sec
+2026-07-23T21:10:31.1535110Z Received 440401920 of 547578032 (80.4%), 51.4 MBs/sec
+2026-07-23T21:10:32.1447280Z Received 532676608 of 547578032 (97.3%), 55.4 MBs/sec
+2026-07-23T21:10:32.8968390Z Received 547578032 of 547578032 (100.0%), 52.6 MBs/sec
+2026-07-23T21:10:32.9075910Z Cache Size: ~522 MB (547578032 B)
+2026-07-23T21:10:32.9214550Z [command]/opt/homebrew/bin/gtar -xf /Users/runner/work/_temp/930864bb-e461-4391-ba53-033458241f98/cache.tzst -P -C /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app --delay-directory-restore --use-compress-program unzstd
+2026-07-23T21:10:35.8948520Z Cache restored successfully
+2026-07-23T21:10:35.9125810Z Restored cache entry with key gradle-dependencies-v1-82c57d30a578187ee20ee2284936636d to /Users/runner/.gradle/caches/modules-*/files-*/*/*/*/* in 13280ms
+2026-07-23T21:10:51.0458500Z Cache restored successfully
+2026-07-23T21:10:51.0666140Z Restored cache entry with key gradle-transforms-v1-4b6d72cc35ba1d9d1ea1449efa077f3f to /Users/runner/.gradle/caches/transforms-4/*/,/Users/runner/.gradle/caches/*/transforms/*/ in 28425ms
+2026-07-23T21:10:51.1511300Z ##[endgroup]
+2026-07-23T21:10:51.1543250Z ##[group]All Gradle Wrapper jars are valid
+2026-07-23T21:10:51.1559550Z ✓ Found known Gradle Wrapper JAR files:
+2026-07-23T21:10:51.1562090Z   76805e32c009c0cf0dd5d206bddc9fb22ea42e84db904b764f3047de095493f3 gradle/wrapper/gradle-wrapper.jar
+2026-07-23T21:10:51.1563400Z ##[endgroup]
+2026-07-23T21:10:51.2235520Z ##[group]Run chmod +x gradlew
+2026-07-23T21:10:51.2236480Z [36;1mchmod +x gradlew[0m
+2026-07-23T21:10:51.2754720Z shell: /bin/bash -e {0}
+2026-07-23T21:10:51.2755400Z env:
+2026-07-23T21:10:51.2756060Z   JAVA_HOME: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:51.2757700Z   JAVA_HOME_17_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:51.2758550Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-07-23T21:10:51.2759920Z   GRADLE_USER_HOME: /Users/runner/.gradle
+2026-07-23T21:10:51.2760860Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-07-23T21:10:51.2761760Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-07-23T21:10:51.2762950Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-07-23T21:10:51.2764200Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-07-23T21:10:51.2764970Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-07-23T21:10:51.2765660Z ##[endgroup]
+2026-07-23T21:10:51.4016920Z ##[group]Run ./gradlew :sharedUI:linkReleaseFrameworkIosArm64
+2026-07-23T21:10:51.4017640Z [36;1m./gradlew :sharedUI:linkReleaseFrameworkIosArm64[0m
+2026-07-23T21:10:51.4054130Z shell: /bin/bash -e {0}
+2026-07-23T21:10:51.4054980Z env:
+2026-07-23T21:10:51.4055750Z   JAVA_HOME: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:51.4057060Z   JAVA_HOME_17_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.20-8/arm64/Contents/Home
+2026-07-23T21:10:51.4057640Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-07-23T21:10:51.4058170Z   GRADLE_USER_HOME: /Users/runner/.gradle
+2026-07-23T21:10:51.4058720Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-07-23T21:10:51.4059090Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-07-23T21:10:51.4079510Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-07-23T21:10:51.4092830Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-07-23T21:10:51.4094050Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-07-23T21:10:51.4094980Z ##[endgroup]
+2026-07-23T21:10:52.7981340Z Starting a Gradle Daemon (subsequent builds will be faster)
+2026-07-23T21:10:52.7983000Z Daemon JVM discovery is an incubating feature.
+2026-07-23T21:10:57.1877540Z Calculating task graph as no cached configuration is available for tasks: :sharedUI:linkReleaseFrameworkIosArm64
+2026-07-23T21:11:00.8515060Z Type-safe project accessors is an incubating feature.
+2026-07-23T21:11:08.5020160Z > Task :sharedUI:kmpPartiallyResolvedDependenciesChecker
+2026-07-23T21:11:08.5041250Z > Task :sharedLogic:kmpPartiallyResolvedDependenciesChecker
+2026-07-23T21:11:08.5045720Z > Task :sharedUI:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-07-23T21:11:08.5047570Z > Task :sharedLogic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-07-23T21:11:08.5050030Z 
+2026-07-23T21:11:08.5050370Z > Task :sharedUI:checkIosArm64MainComposeLibrariesCompatibility
+2026-07-23T21:11:08.5051480Z w: Skiko dependencies' versions are incompatible.
+2026-07-23T21:11:08.5052080Z     io.coil-kt.coil3:coil-core-iosarm64:3.2.0
+2026-07-23T21:11:08.5052660Z     \--- org.jetbrains.skiko:skiko:0.9.4 -> 0.144.6
+2026-07-23T21:11:08.5053160Z 
+2026-07-23T21:11:08.5053540Z This may lead to compilation errors or unexpected behavior at runtime.
+2026-07-23T21:11:08.5054460Z Such version mismatch might be caused by dependency constraints in one of the included libraries.
+2026-07-23T21:11:08.5055380Z You can inspect resulted dependencies tree via `./gradlew :sharedUI:dependencies  --configuration iosArm64CompileKlibraries`.
+2026-07-23T21:11:08.5057250Z See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+2026-07-23T21:11:08.5057870Z 
+2026-07-23T21:11:08.5058250Z Note: Skiko is considered implementation detail in Compose Multiplatform and might be incompatible across versions.
+2026-07-23T21:11:08.5060120Z Please align Skiko dependencies to the same version. If possible, avoid direct Skiko references and use Compose APIs instead.
+2026-07-23T21:11:08.5060790Z 
+2026-07-23T21:11:08.5788360Z 
+2026-07-23T21:11:08.5796880Z > Task :sharedLogic:exportCrossCompilationMetadataForIosArm64ApiElements
+2026-07-23T21:11:08.5797990Z > Task :sharedUI:convertXmlValueResourcesForAppleMain NO-SOURCE
+2026-07-23T21:11:08.5799270Z > Task :sharedUI:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+2026-07-23T21:11:08.5800550Z > Task :sharedUI:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+2026-07-23T21:11:08.5801700Z > Task :sharedUI:generateResourceAccessorsForAppleMain NO-SOURCE
+2026-07-23T21:11:08.7229190Z > Task :sharedUI:convertXmlValueResourcesForCommonMain
+2026-07-23T21:11:08.8538470Z > Task :sharedUI:copyNonXmlValueResourcesForCommonMain
+2026-07-23T21:11:08.8539480Z > Task :sharedUI:prepareComposeResourcesTaskForCommonMain
+2026-07-23T21:11:09.0499640Z > Task :sharedUI:generateResourceAccessorsForCommonMain
+2026-07-23T21:11:09.0501990Z > Task :sharedUI:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+2026-07-23T21:11:09.0504030Z > Task :sharedUI:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+2026-07-23T21:11:09.0505300Z > Task :sharedUI:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+2026-07-23T21:11:09.0506080Z > Task :sharedUI:generateResourceAccessorsForIosArm64Main NO-SOURCE
+2026-07-23T21:11:09.0507520Z > Task :sharedUI:convertXmlValueResourcesForIosMain NO-SOURCE
+2026-07-23T21:11:09.0508360Z > Task :sharedUI:copyNonXmlValueResourcesForIosMain NO-SOURCE
+2026-07-23T21:11:25.1966220Z > Task :sharedUI:prepareComposeResourcesTaskForIosMain NO-SOURCE
+2026-07-23T21:11:25.3481110Z > Task :sharedUI:generateResourceAccessorsForIosMain NO-SOURCE
+2026-07-23T21:11:25.3503200Z > Task :sharedUI:convertXmlValueResourcesForNativeMain NO-SOURCE
+2026-07-23T21:11:25.3504440Z > Task :sharedUI:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+2026-07-23T21:11:25.3528040Z > Task :sharedUI:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+2026-07-23T21:11:25.3529900Z > Task :sharedUI:generateResourceAccessorsForNativeMain NO-SOURCE
+2026-07-23T21:11:25.3531340Z > Task :sharedUI:generateActualResourceCollectorsForIosArm64Main
+2026-07-23T21:11:25.3532590Z > Task :sharedUI:generateComposeResClass
+2026-07-23T21:11:25.3533910Z > Task :sharedUI:generateExpectResourceCollectorsForCommonMain
+2026-07-23T21:11:25.3535070Z 
+2026-07-23T21:11:25.3535570Z > Task :sharedUI:downloadKotlinNativeDistribution
+2026-07-23T21:11:25.3537640Z Kotlin/Native bundle directory /Users/runner/.konan/kotlin-native-prebuilt-macos-aarch64-2.3.21 is not empty. Native bundle files will be overwritten.
+2026-07-23T21:11:38.4197970Z 
+2026-07-23T21:11:38.4200170Z > Task :sharedLogic:downloadKotlinNativeDistribution
+2026-07-23T21:11:55.4247140Z 
+2026-07-23T21:11:55.4248770Z > Task :sharedUI:downloadKotlinNativeDistribution
+2026-07-23T21:11:55.4250490Z Downloading native dependencies (LLVM, sysroot etc). This is a one-time action performed only on the first run of the compiler.
+2026-07-23T21:11:55.4252470Z Downloading dependency https://download.jetbrains.com/kotlin/native/resources/llvm/19-aarch64-macos/llvm-19-aarch64-macos-essentials-81.tar.gz to /Users/runner/.konan/dependencies/cache/llvm-19-aarch64-macos-essentials-81.tar.gz
+2026-07-23T21:11:56.2470020Z Done.
+2026-07-23T21:11:56.2546500Z Extracting dependency: /Users/runner/.konan/dependencies/cache/llvm-19-aarch64-macos-essentials-81.tar.gz into /Users/runner/.konan/dependencies
+2026-07-23T21:11:58.8793470Z Downloading dependency https://download.jetbrains.com/kotlin/native/libffi-3.3-1-macos-arm64.tar.gz to /Users/runner/.konan/dependencies/cache/libffi-3.3-1-macos-arm64.tar.gz
+2026-07-23T21:11:58.9990850Z Done.
+2026-07-23T21:11:59.0058620Z Extracting dependency: /Users/runner/.konan/dependencies/cache/libffi-3.3-1-macos-arm64.tar.gz into /Users/runner/.konan/dependencies
+2026-07-23T21:12:05.7235380Z e: file:///Users/runner/work/Eyefield_ios_app/Eyefield_ios_app/sharedLogic/src/commonMain/kotlin/com/nephclick/eyefield/SupabaseClient.kt:131:21 Unresolved reference 'System'.
+2026-07-23T21:12:05.7236580Z 
+2026-07-23T21:12:05.7249020Z e: file:///Users/runner/work/Eyefield_ios_app/Eyefield_ios_app/sharedLogic/src/commonMain/kotlin/com/nephclick/eyefield/SupabaseClient.kt:195:87 Unresolved reference 'java'.
+2026-07-23T21:12:05.7250180Z > Task :sharedLogic:compileKotlinIosArm64 FAILED
+2026-07-23T21:12:05.7251330Z gradle/actions: Writing build results to /Users/runner/work/_temp/.gradle-actions/build-results/__run_2-1784841058593.json
+2026-07-23T21:12:05.7874280Z 
+2026-07-23T21:12:05.7893820Z FAILURE: Build failed with an exception.
+2026-07-23T21:12:05.7894390Z 14 actionable tasks: 14 executed
+2026-07-23T21:12:05.7895400Z 
+2026-07-23T21:12:05.7895660Z * What went wrong:
+2026-07-23T21:12:05.7896150Z Execution failed for task ':sharedLogic:compileKotlinIosArm64'.
+2026-07-23T21:12:05.7896800Z > Compilation finished with errors
+2026-07-23T21:12:05.7897160Z 
+2026-07-23T21:12:05.7897410Z * Try:
+2026-07-23T21:12:05.7898190Z > Run with --stacktrace option to get the stack trace.
+2026-07-23T21:12:05.7911160Z > Run with --info or --debug option to get more log output.
+2026-07-23T21:12:05.7912010Z > Run with --scan to generate a Build Scan (Powered by Develocity).
+2026-07-23T21:12:05.7912560Z > Get more help at https://help.gradle.org.
+2026-07-23T21:12:05.7912820Z 
+2026-07-23T21:12:05.7912970Z BUILD FAILED in 1m 13s
+2026-07-23T21:12:05.9537470Z Configuration cache entry stored.
+2026-07-23T21:12:07.0404980Z ##[error]Process completed with exit code 1.
+2026-07-23T21:12:07.0791420Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:12:07.0792550Z Post job cleanup.
+2026-07-23T21:12:07.7770180Z In post-action step
+2026-07-23T21:12:07.7792580Z ##[group]Stopping Gradle daemons
+2026-07-23T21:12:07.7796540Z Stopping Gradle daemons for /Users/runner/.gradle/wrapper/dists/gradle-9.1.0-bin/9agqghryom9wkf8r80qlhnts3/gradle-9.1.0
+2026-07-23T21:12:07.7847270Z [command]/Users/runner/.gradle/wrapper/dists/gradle-9.1.0-bin/9agqghryom9wkf8r80qlhnts3/gradle-9.1.0/bin/gradle --stop
+2026-07-23T21:12:08.6243240Z Stopping Daemon(s)
+2026-07-23T21:12:08.6289010Z 1 Daemon stopped
+2026-07-23T21:12:08.6367680Z ##[endgroup]
+2026-07-23T21:12:08.6450570Z Not performing cache-cleanup due to build failure
+2026-07-23T21:12:08.6487880Z ##[group]Caching Gradle state
+2026-07-23T21:12:08.6488880Z Cache hit occurred on the cache key gradle-home-v1|macOS-ARM64|build[7065ae85df05caed635ee85319bbb27e]-9463c2386cab6b2163269dd4135765c94a0a1c8f, not saving cache.
+2026-07-23T21:12:08.6491800Z ##[endgroup]
+2026-07-23T21:12:08.6492100Z Generating Job Summary
+2026-07-23T21:12:08.6493300Z Completed post-action step
+2026-07-23T21:12:08.6694100Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:12:08.6695250Z Post job cleanup.
+2026-07-23T21:12:08.8449340Z (node:3868) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-07-23T21:12:08.8450170Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-07-23T21:12:08.8589530Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-23T21:12:08.8590600Z Post job cleanup.
+2026-07-23T21:12:08.9642500Z [command]/opt/homebrew/bin/git version
+2026-07-23T21:12:09.0206620Z git version 2.55.0
+2026-07-23T21:12:09.0236080Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/bfef948f-c85b-4a1e-b557-3331831949f5/.gitconfig'
+2026-07-23T21:12:09.0252420Z Temporarily overriding HOME='/Users/runner/work/_temp/bfef948f-c85b-4a1e-b557-3331831949f5' before making global git config changes
+2026-07-23T21:12:09.0253700Z Adding repository directory to the temporary git global config as a safe directory
+2026-07-23T21:12:09.0258240Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Eyefield_ios_app/Eyefield_ios_app
+2026-07-23T21:12:09.0453460Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-07-23T21:12:09.0565850Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-07-23T21:12:09.1865940Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-07-23T21:12:09.1934030Z http.https://github.com/.extraheader
+2026-07-23T21:12:09.1941700Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-07-23T21:12:09.2028160Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-07-23T21:12:09.3726730Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-07-23T21:12:09.4033890Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-07-23T21:12:09.5388020Z Cleaning up orphan processes
+2026-07-23T21:12:11.0384630Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4, gradle/actions/setup-gradle@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

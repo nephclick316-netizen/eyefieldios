@@ -2,7 +2,7 @@ package com.nephclick.eyefield.utils
 
 import platform.Foundation.NSUserDefaults
 
-actual class LanguageSettings(context: Any?) {
+actual class LanguageSettings actual constructor(context: Any?) {
     private val defaults = NSUserDefaults.standardUserDefaults
 
     actual fun saveLanguage(lang: String) {

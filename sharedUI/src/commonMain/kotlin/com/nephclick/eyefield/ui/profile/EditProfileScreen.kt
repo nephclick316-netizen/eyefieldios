@@ -34,9 +34,7 @@ import kotlinx.coroutines.async
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+// Removed java.time imports
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.ui.graphics.graphicsLayer
@@ -184,13 +182,13 @@ class EditProfileScreen(private val initialProfile: Profile, private val initial
                                         val userId = session?.user?.id ?: throw Exception("Not logged in")
 
                                         // Offload uploads to IO dispatcher to avoid blocking UI
-                                        val avatarDeferred = async(kotlinx.coroutines.Dispatchers.IO) {
+                                        val avatarDeferred = async(kotlinx.coroutines.Dispatchers.Default) {
                                             if (avatarBytes != null) R2Uploader.uploadMedia(avatarBytes!!, "avatar", "image/jpeg", "jpg") { sent, total ->
                                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
                                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { avatarUploadProgress = pct } }
                                             } else initialProfile.avatarUrl
                                         }
-                                        val bannerDeferred = async(kotlinx.coroutines.Dispatchers.IO) {
+                                        val bannerDeferred = async(kotlinx.coroutines.Dispatchers.Default) {
                                             if (bannerBytes != null) R2Uploader.uploadMedia(bannerBytes!!, "banner", "image/jpeg", "jpg") { sent, total ->
                                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
                                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { bannerUploadProgress = pct } }
@@ -348,7 +346,7 @@ class EditProfileScreen(private val initialProfile: Profile, private val initial
                         if (showDatePicker) {
                             DatePickerDialog(
                                 onDismissRequest = { showDatePicker = false },
-                                confirmButton = { TextButton(onClick = { showDatePicker = false; datePickerState.selectedDateMillis?.let { millis -> dob = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE) } }) { Text(stringResource(Res.string.ok)) } },
+                                confirmButton = { TextButton(onClick = { showDatePicker = false; datePickerState.selectedDateMillis?.let { millis -> dob = com.nephclick.eyefield.utils.formatEpochToIsoDate(millis) } }) { Text(stringResource(Res.string.ok)) } },
                                 dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text(stringResource(Res.string.cancel)) } }
                             ) { DatePicker(state = datePickerState) }
                         }

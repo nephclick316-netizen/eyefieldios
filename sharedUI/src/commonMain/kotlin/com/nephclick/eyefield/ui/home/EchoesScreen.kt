@@ -139,7 +139,7 @@ class EchoesScreen : Screen {
                     showTrimmerDialog = true
                 } else {
                     // Offload compression and upload to IO so the UI thread is not blocked
-                    scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    scope.launch(kotlinx.coroutines.Dispatchers.Default) {
                         // register a new progress slot
                         val slotIndex = kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                             postUploadProgresses.add(0f); postUploadProgresses.lastIndex
@@ -169,7 +169,7 @@ class EchoesScreen : Screen {
         val handlePulseImagePicked: (ByteArray?) -> Unit = { bytes ->
             if (bytes != null) {
                 // Offload compression and upload to IO
-                scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                scope.launch(kotlinx.coroutines.Dispatchers.Default) {
                     try {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingPulse = true; pulseUploadProgress = 0f }
                         val compressed = compressImage(bytes)
@@ -602,7 +602,7 @@ class EchoesScreen : Screen {
                                                     mediaType = "image",
                                                     linkUrl = pulseLinkUrl.ifBlank { null },
                                                     caption = null,
-                                                    expiresAt = Clock.System.now().plus(24, DateTimeUnit.HOUR).toString()
+                                                    expiresAt = (com.nephclick.eyefield.utils.getCurrentTimeMillis() + 86400000L).toString()
                                                 )
                                             )
 
@@ -659,7 +659,7 @@ class EchoesScreen : Screen {
                                         scope.launch {
                                             try {
                                                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingPost = true }
-                                                val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                                val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                                                     R2Uploader.uploadMedia(videoToTrim!!, "post", "video/mp4", "mp4")
                                                 }
                                                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {

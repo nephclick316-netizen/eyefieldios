@@ -30,7 +30,7 @@ object R2Uploader {
 
         // 1. Get Presigned URL
         val response = httpClient.post("https://fzcoljqdtmkgrswwxkyi.supabase.co/functions/v1/r2-presigned-url") {
-            setBody(Json.parseToJsonElement("{\"fileName\":\"${fileNamePrefix}/${userId}_${System.currentTimeMillis()}.${extension}\", \"fileType\":\"${mimeType}\"}").toString())
+            setBody(Json.parseToJsonElement("{\"fileName\":\"${fileNamePrefix}/${userId}_${com.nephclick.eyefield.utils.getCurrentTimeMillis()}.${extension}\", \"fileType\":\"${mimeType}\"}").toString())
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer ${session.accessToken}")
         }

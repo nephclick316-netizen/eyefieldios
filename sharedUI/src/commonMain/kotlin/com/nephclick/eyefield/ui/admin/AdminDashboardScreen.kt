@@ -450,7 +450,7 @@ class AdminDashboardScreen : Screen {
                         coroutineScope.launch {
                                 try {
                                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isLoading = true; adminUploadProgress = 0f }
-                                val finalImageUrl = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                val finalImageUrl = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                                     if (selectedImageBytes != null) {
                                         com.nephclick.eyefield.utils.R2Uploader.uploadMedia(selectedImageBytes!!, "promo", "image/jpeg", "jpg") { sent, total ->
                                             val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f
@@ -473,7 +473,7 @@ class AdminDashboardScreen : Screen {
                                 selectedImageBytes = null
                                 linkValue = ""
                             } catch (e: Exception) {
-                                android.util.Log.w("AdminDashboard", "Promo upload failed: ${e.message}")
+                                println("Promo upload failed: ${e.message}")
                             } finally {
                                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isLoading = false }
                             }

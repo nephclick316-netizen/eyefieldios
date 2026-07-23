@@ -86,7 +86,7 @@ class CreateProductScreen(val productIdToEdit: String? = null) : Screen {
                     }
                     try {
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploading = true }
-                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        val url = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                             val compressed = compressImage(bytes)
                             R2Uploader.uploadMedia(compressed, "product", "image/jpeg", "jpg") { sent, total ->
                                 val pct = if (total > 0) sent.toFloat() / total.toFloat() else 0f

@@ -152,7 +152,7 @@ class SettingsScreen(
                                         languageSettings.saveLanguage(langCode)
                                         showLanguageDropdown = false
                                         // Restart Activity to apply locale change immediately
-                                        (context as? android.app.Activity)?.recreate()
+                                        // Activity recreation not supported on iOS
                                     }
                                 )
                             }

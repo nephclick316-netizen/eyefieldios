@@ -128,7 +128,7 @@ class CallScreen(
                                             token = tk.token
                                             appId = tk.appId
                                         } else {
-                                            android.util.Log.e("CallScreen", "Failed to get Agora token for caller. roomName=$roomName")
+                                            println("ERROR " + "CallScreen" + ": " + "Failed to get Agora token for caller. roomName=$roomName")
                                             callState = "failed"
                                         }
                                     }
@@ -140,7 +140,7 @@ class CallScreen(
                                 }
                             }
                         } catch (e: Exception) {
-                            android.util.Log.e("CallScreen", "Poll error: ${e.message}")
+                            println("ERROR " + "CallScreen" + ": " + "Poll error: ${e.message}")
                         }
                     }
                 } else {
@@ -157,7 +157,7 @@ class CallScreen(
                         if (log != null && log.channelName.isNotBlank()) {
                             roomName = log.channelName
                         }
-                    } catch (e: Exception) { android.util.Log.e("CallScreen", "Failed to load channel name: ${e.message}") }
+                    } catch (e: Exception) { println("ERROR " + "CallScreen" + ": " + "Failed to load channel name: ${e.message}") }
                 }
                 // Play ringing sound
                 audioPlayer.play("soynoviembre_classic_phone_ringtone.mp3", isRingtone = true)
@@ -174,7 +174,7 @@ class CallScreen(
                                 audioPlayer.stop()
                                 navigator?.pop()
                             }
-                        } catch (e: Exception) { android.util.Log.e("CallScreen", "Receiver poll error: ${e.message}") }
+                        } catch (e: Exception) { println("ERROR " + "CallScreen" + ": " + "Receiver poll error: ${e.message}") }
                     }
                 }
             }
@@ -195,7 +195,7 @@ class CallScreen(
                             try {
                                 com.nephclick.eyefield.Supabase.updateCallLog(logId, com.nephclick.eyefield.models.CallLogUpdate(
                                     callStatus = "ended",
-                                    endedAt = kotlinx.datetime.Clock.System.now().toString()
+                                    endedAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
                                 ))
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -272,7 +272,7 @@ class CallScreen(
                                         currentCallLogId?.let { id ->
                                             val update = com.nephclick.eyefield.models.CallLogUpdate(
                                                 callStatus = "accepted",
-                                                startedAt = kotlinx.datetime.Clock.System.now().toString()
+                                                startedAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
                                             )
                                             com.nephclick.eyefield.Supabase.updateCallLog(id, update)
                                             // Wait for currentUserId to be populated before fetching token
@@ -294,11 +294,11 @@ class CallScreen(
                                                          roomName = effectiveRoomName
                                                      }
                                                  } catch (e: Exception) {
-                                                     android.util.Log.e("CallScreen", "Failed to resolve roomName: ${e.message}")
+                                                     println("ERROR " + "CallScreen" + ": " + "Failed to resolve roomName: ${e.message}")
                                                  }
                                              }
                                              if (effectiveRoomName.isBlank()) {
-                                                 android.util.Log.e("CallScreen", "Cannot accept: roomName is blank after DB lookup")
+                                                 println("ERROR " + "CallScreen" + ": " + "Cannot accept: roomName is blank after DB lookup")
                                                  callState = "failed"
                                                  return@launch
                                              }
@@ -307,7 +307,7 @@ class CallScreen(
                                                  token = tk.token
                                                  appId = tk.appId
                                              } else {
-                                                 android.util.Log.e("CallScreen", "Agora token null or blank for receiver. room=$effectiveRoomName")
+                                                 println("ERROR " + "CallScreen" + ": " + "Agora token null or blank for receiver. room=$effectiveRoomName")
                                                  callState = "failed"
                                              }
                                          }

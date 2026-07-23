@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 actual fun NativeCallUI(
     roomName: String,
     token: String,
-    appId: String,
+    appId: String, userAccount: String,
     isVideoCall: Boolean,
     onCallEnded: () -> Unit
 ) {
