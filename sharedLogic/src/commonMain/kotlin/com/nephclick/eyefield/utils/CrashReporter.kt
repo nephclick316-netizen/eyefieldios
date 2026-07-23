@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CrashReport(
     val stack_trace: String,
-    val created_at: String = Clock.System.now().toString(),
+    val created_at: String = io.ktor.util.date.GMTDate().let { "${it.year}-${(it.month.ordinal + 1).toString().padStart(2, '0')}-${it.dayOfMonth.toString().padStart(2, '0')}T${it.hours.toString().padStart(2, '0')}:${it.minutes.toString().padStart(2, '0')}:${it.seconds.toString().padStart(2, '0')}Z" },
     val user_id: String? = null
 )
 
