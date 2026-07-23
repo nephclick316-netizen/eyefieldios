@@ -127,8 +127,7 @@ object Supabase {
         val payload = mapOf(
             "user_id" to userId,
             "permission_denied_count" to permissionDeniedCount,
-            "wake_failures" to wakeFailures,
-            "ts" to System.currentTimeMillis()
+            "wake_failures" to wakeFailures
         )
         var attempt = 0
         val maxAttempts = 4
@@ -192,10 +191,9 @@ object Supabase {
     suspend fun createProduct(product: Product) {
         try {
             val toInsert = if (product.id.isBlank()) {
-                product.copy(id = io.github.jan.supabase.SupabaseClientBuilder::class.java.simpleName + kotlin.random.Random.nextInt().toString()) // hack if uuid is needed, but typically supabase generates it if omitted. Better to just let supabase handle it if empty or we generate one. Wait, Data class Product has `val id: String = ""`. If it's an empty string, maybe Supabase doesn't like it. But `createProduct` worked before, so I'll leave it as is.
-                product 
+                product.copy(id = "product_${kotlin.random.Random.nextInt()}")
             } else product
-            client.postgrest["products"].insert(product) 
+            client.postgrest["products"].insert(toInsert) 
         } catch (e: Exception) { println("Error creating product: ${e.message}") }
     }
 
