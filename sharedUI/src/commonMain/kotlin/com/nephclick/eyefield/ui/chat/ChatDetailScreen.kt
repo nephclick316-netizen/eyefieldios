@@ -622,10 +622,12 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         text = try {
-                                            val instant = kotlinx.datetime.Instant.parse(message.createdAt ?: "")
-                                            val localDateTime = instant.toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-                                            val month = localDateTime.month.name.take(3).lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                                            "$month ${localDateTime.dayOfMonth}, ${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}"
+                                            val str = message.createdAt ?: ""
+                                            if (str.length >= 16 && str.contains("T")) {
+                                                val date = str.substringBefore("T")
+                                                val time = str.substringAfter("T").substring(0, 5)
+                                                "$date $time"
+                                            } else str
                                         } catch (e: Exception) {
                                             ""
                                         },
@@ -750,9 +752,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                     TextButton(onClick = {
                         val selectedMillis = datePickerState.selectedDateMillis
                         if (selectedMillis != null) {
-                            val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(selectedMillis)
-                            val localDate = instant.toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault()).date
-                            selectedDateFilter = localDate.toString()
+                            selectedDateFilter = com.nephclick.eyefield.utils.formatEpochToIsoDate(selectedMillis)
                         } else {
                             selectedDateFilter = null
                         }

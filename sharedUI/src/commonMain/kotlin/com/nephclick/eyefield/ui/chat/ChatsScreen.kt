@@ -324,15 +324,9 @@ class ChatsScreen : Screen {
                                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                                     Text(otherUser!!.displayName(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                                                     Column(horizontalAlignment = Alignment.End) {
-                                                        val instant = room.lastMessageTime?.let { try { kotlinx.datetime.Instant.parse(it) } catch(e: Exception) { null } }
-                                                        val dateStr = if (instant != null) {
-                                                            val local = instant.toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-                                                            "${local.month.name.take(3).lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} ${local.dayOfMonth}"
-                                                        } else room.lastMessageTime?.take(10) ?: ""
-                                                        val timeStr = if (instant != null) {
-                                                            val local = instant.toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-                                                            "${local.hour.toString().padStart(2, '0')}:${local.minute.toString().padStart(2, '0')}"
-                                                        } else ""
+                                                        val t = room.lastMessageTime ?: ""
+                                                        val dateStr = if (t.contains("T")) t.substringBefore("T") else t.take(10)
+                                                        val timeStr = if (t.contains("T")) t.substringAfter("T").take(5) else ""
                                                         
                                                         Text(dateStr, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         Row(verticalAlignment = Alignment.CenterVertically) {
