@@ -45,7 +45,7 @@ jobs:
       - name: Package IPA
         run: |
           mkdir Payload
-          cp -r build/sym/Release-iphoneos/iosApp.app Payload/
+          cp -r build/sym/Release-iphoneos/EyeField.app Payload/
           zip -r EyeField.ipa Payload
 
       # Saves the final .ipa file so you can download it to Windows
