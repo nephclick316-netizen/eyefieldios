@@ -656,13 +656,23 @@ object Supabase {
 
     suspend fun sendMessage(message: com.nephclick.eyefield.models.ChatMessage) {
         try {
-            client.postgrest["chat_messages"].insert(message)
+            val safeMessage = if (message.id.isBlank()) {
+                message.copy(id = com.nephclick.eyefield.models.generateUUID())
+            } else {
+                message
+            }
+            client.postgrest["chat_messages"].insert(safeMessage)
+            val timestamp = if (safeMessage.createdAt?.contains("T") == true) {
+                safeMessage.createdAt
+            } else {
+                com.nephclick.eyefield.models.getIsoTimestamp()
+            }
             val update = com.nephclick.eyefield.models.ChatRoomUpdate(
-                lastMessage = message.text,
-                lastMessageTime = message.createdAt ?: "now()"
+                lastMessage = safeMessage.text,
+                lastMessageTime = timestamp
             )
             client.postgrest["chat_rooms"].update(update) {
-                filter { eq("id", message.roomId) }
+                filter { eq("id", safeMessage.roomId) }
             }
         } catch (e: Exception) {
             println("Error sending message: ${e.message}")
@@ -820,6 +830,17 @@ object Supabase {
         }
     }
 
+    suspend fun fetchCallLogById(callLogId: String): com.nephclick.eyefield.models.CallLog? {
+        return try {
+            client.postgrest["call_logs"].select(columns = Columns.ALL) {
+                filter { eq("id", callLogId) }
+            }.decodeSingleOrNull<com.nephclick.eyefield.models.CallLog>()
+        } catch (e: Exception) {
+            println("Error fetching call log by id: ${e.message}")
+            null
+        }
+    }
+
     suspend fun fetchCallLogs(userId: String): List<com.nephclick.eyefield.models.CallLog> {
         return try {
             client.postgrest["call_logs"].select(columns = Columns.ALL) {
@@ -908,7 +929,7 @@ object Supabase {
             val anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y29sanFkdG1rZ3Jzd3d4a3lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzU4NzIsImV4cCI6MjA5NzExMTg3Mn0.bMO4poe2Zs_c_zTor5gFf2BFvRIWSKF6j9OtCdFnOdo"
             val tokenStr = client.auth.currentAccessTokenOrNull() ?: anonKey
             // Upsert via REST — simpler than using the postgrest plugin with raw JSON objects
-            val response = httpClient.post("https://fzcoljqdtmkgrswwxkyi.supabase.co/rest/v1/device_tokens") {
+            val response = httpClient.post("https://fzcoljqdtmkgrswwxkyi.supabase.co/rest/v1/device_tokens?on_conflict=user_id") {
                 header("Authorization", "Bearer $tokenStr")
                 header("apikey", anonKey)
                 header("Prefer", "resolution=merge-duplicates")

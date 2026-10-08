@@ -137,6 +137,7 @@ class CascadeaScreen : Screen {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .statusBarsPadding()
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {

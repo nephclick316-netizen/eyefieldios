@@ -70,6 +70,13 @@ class MainActivity : ComponentActivity() {
 
         // Register FCM token with Supabase so this device can receive call notifications
         registerFcmToken()
+        CoroutineScope(Dispatchers.Main).launch {
+            Supabase.client.auth.sessionStatus.collect { status ->
+                if (status is io.github.jan.supabase.auth.status.SessionStatus.Authenticated) {
+                    registerFcmToken()
+                }
+            }
+        }
         
         // Setup global crash handler
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -87,6 +94,27 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun registerFcmToken() {
+        val prefs = getSharedPreferences("eyefield_prefs", Context.MODE_PRIVATE)
+        val cachedToken = prefs.getString("pending_fcm_token", null)
+
+        val syncToken: (String) -> Unit = { tokenToSave ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val userId = Supabase.client.auth.currentSessionOrNull()?.user?.id
+                    if (userId != null) {
+                        Supabase.saveFcmToken(userId, tokenToSave)
+                        prefs.edit().remove("pending_fcm_token").apply()
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MainActivity", "Failed to save FCM token", e)
+                }
+            }
+        }
+
+        if (!cachedToken.isNullOrEmpty()) {
+            syncToken(cachedToken)
+        }
+
         com.google.firebase.messaging.FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -95,22 +123,7 @@ class MainActivity : ComponentActivity() {
                 }
                 val token = task.result as? String ?: return@addOnCompleteListener
                 android.util.Log.d("MainActivity", "FCM Token: $token")
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val userId = Supabase.client.auth.currentSessionOrNull()?.user?.id
-                        if (userId != null) {
-                            Supabase.saveFcmToken(userId, token)
-                        } else {
-                            // Save locally; the token will be registered on next successful login
-                            getSharedPreferences("eyefield_prefs", Context.MODE_PRIVATE)
-                                .edit()
-                                .putString("pending_fcm_token", token)
-                                .apply()
-                        }
-                    } catch (e: Exception) {
-                        android.util.Log.e("MainActivity", "Failed to save FCM token", e)
-                    }
-                }
+                syncToken(token)
             }
     }
 

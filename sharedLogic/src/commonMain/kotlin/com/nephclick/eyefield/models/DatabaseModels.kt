@@ -3,6 +3,7 @@ package com.nephclick.eyefield.models
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import com.nephclick.eyefield.utils.PlatformSerializable
+import io.ktor.util.date.GMTDate
 
 @Serializable
 data class Profile(
@@ -307,3 +308,30 @@ data class AgoraTokenResponse(
     val token: String,
     val appId: String
 ) : PlatformSerializable
+
+fun generateUUID(): String {
+    val chars = "0123456789abcdef"
+    var uuid = ""
+    for (i in 0..35) {
+        if (i == 8 || i == 13 || i == 18 || i == 23) {
+            uuid += "-"
+        } else if (i == 14) {
+            uuid += "4"
+        } else if (i == 19) {
+            uuid += chars[kotlin.random.Random.nextInt(8, 12)]
+        } else {
+            uuid += chars[kotlin.random.Random.nextInt(16)]
+        }
+    }
+    return uuid
+}
+
+fun getIsoTimestamp(): String {
+    val date = GMTDate()
+    val month = (date.month.ordinal + 1).toString().padStart(2, '0')
+    val day = date.dayOfMonth.toString().padStart(2, '0')
+    val hours = date.hours.toString().padStart(2, '0')
+    val minutes = date.minutes.toString().padStart(2, '0')
+    val seconds = date.seconds.toString().padStart(2, '0')
+    return "${date.year}-$month-${day}T$hours:$minutes:${seconds}Z"
+}

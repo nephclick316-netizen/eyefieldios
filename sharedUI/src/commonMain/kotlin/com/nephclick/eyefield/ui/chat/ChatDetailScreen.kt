@@ -26,6 +26,13 @@ import coil3.compose.AsyncImage
 import com.nephclick.eyefield.Supabase
 import com.nephclick.eyefield.models.ChatMessage
 import com.nephclick.eyefield.models.Profile
+import com.nephclick.eyefield.models.generateUUID
+import com.nephclick.eyefield.models.getIsoTimestamp
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 
@@ -126,14 +133,18 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                             }
                         }
                         val newImageMsg = ChatMessage(
+                            id = generateUUID(),
                             roomId = roomId,
                             senderId = currentUserId,
                             text = "Image Attachment",
                             mediaUrl = url,
-                            createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
+                            createdAt = getIsoTimestamp()
                         )
                         messages = messages + newImageMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newImageMsg)
+                        if (messages.isNotEmpty()) {
+                            listState.animateScrollToItem(messages.size - 1)
+                        }
                     } catch (e: Exception) {
                         println("Upload failed: ${e.message}")
                     } finally {
@@ -156,9 +167,19 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { chatUploadProgress = pct } }
                             }
                         }
-                        val newVideoMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Video Attachment", mediaUrl = url, createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString())
+                        val newVideoMsg = ChatMessage(
+                            id = generateUUID(),
+                            roomId = roomId,
+                            senderId = currentUserId,
+                            text = "Video Attachment",
+                            mediaUrl = url,
+                            createdAt = getIsoTimestamp()
+                        )
                         messages = messages + newVideoMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newVideoMsg)
+                        if (messages.isNotEmpty()) {
+                            listState.animateScrollToItem(messages.size - 1)
+                        }
                     } catch(e: Exception) { println("Upload failed: ${e.message}") } finally { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = false } }
                 }
             }
@@ -177,9 +198,19 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 kotlinx.coroutines.runBlocking { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { chatUploadProgress = pct } }
                             }
                         }
-                        val newDocMsg = ChatMessage(roomId = roomId, senderId = currentUserId, text = "Document Attachment", mediaUrl = url, createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString())
+                        val newDocMsg = ChatMessage(
+                            id = generateUUID(),
+                            roomId = roomId,
+                            senderId = currentUserId,
+                            text = "Document Attachment",
+                            mediaUrl = url,
+                            createdAt = getIsoTimestamp()
+                        )
                         messages = messages + newDocMsg
                         com.nephclick.eyefield.Supabase.sendMessage(newDocMsg)
+                        if (messages.isNotEmpty()) {
+                            listState.animateScrollToItem(messages.size - 1)
+                        }
                     } catch(e: Exception) { println("Upload failed: ${e.message}") } finally { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) { isUploadingMedia = false } }
                 }
             }
@@ -200,6 +231,38 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
             matchesSearch && matchesDate && (if (showSearchPopup) matchesTab else true)
         }
 
+        val performSendMessage: () -> Unit = {
+            val textToSend = messageText.trim()
+            if (textToSend.isNotEmpty()) {
+                messageText = ""
+                val prefix = if (replyReference != null) "> Replying to: ${replyReference!!.text.take(20)}...\n\n" else ""
+                val finalMessageText = "$prefix$textToSend"
+                replyReference = null
+                val msgId = generateUUID()
+                val nowIso = getIsoTimestamp()
+                val newMessage = ChatMessage(
+                    id = msgId,
+                    roomId = roomId,
+                    senderId = currentUserId,
+                    text = finalMessageText,
+                    mediaUrl = null,
+                    isRead = false,
+                    createdAt = nowIso
+                )
+                messages = messages + newMessage
+                scope.launch {
+                    try {
+                        com.nephclick.eyefield.Supabase.sendMessage(newMessage)
+                        if (messages.isNotEmpty()) {
+                            listState.animateScrollToItem(messages.size - 1)
+                        }
+                    } catch (e: Exception) {
+                        println("Error sending message: ${e.message}")
+                    }
+                }
+            }
+        }
+
         Scaffold(
             modifier = Modifier.fillMaxSize().imePadding(),
             containerColor = MaterialTheme.colorScheme.background,
@@ -209,15 +272,20 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "←",
-                            fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.clickable { navigator?.pop() }.padding(end = 16.dp)
-                        )
+                        IconButton(
+                            onClick = { navigator?.pop() },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Text(
+                                text = "←",
+                                fontSize = 22.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -228,50 +296,74 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 AsyncImage(
                                     model = otherUser.avatarUrl,
                                     contentDescription = stringResource(Res.string.avatar),
-                                    modifier = Modifier.size(40.dp).clip(CircleShape),
+                                    modifier = Modifier.size(36.dp).clip(CircleShape),
                                     contentScale = ContentScale.Crop
                                 )
                             } else {
                                 Box(
-                                    modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.Gray),
+                                    modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.Gray),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text((otherUser.username ?: "U").take(1).uppercase(), color = Color.White, fontWeight = FontWeight.Bold)
                                 }
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(otherUser.fullName ?: (otherUser.username ?: stringResource(Res.string.user)), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, maxLines = 1)
-                                Text(if (isOtherUserOnline) stringResource(Res.string.online) else stringResource(Res.string.offline), style = MaterialTheme.typography.bodySmall, color = if (isOtherUserOnline) MaterialTheme.colorScheme.primary else Color.Gray)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(modifier = Modifier.weight(1f, fill = false)) {
+                                Text(
+                                    otherUser.fullName ?: (otherUser.username ?: stringResource(Res.string.user)),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    if (isOtherUserOnline) stringResource(Res.string.online) else stringResource(Res.string.offline),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                    color = if (isOtherUserOnline) MaterialTheme.colorScheme.primary else Color.Gray,
+                                    maxLines = 1
+                                )
                             }
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        IconButton(onClick = { navigator?.push(com.nephclick.eyefield.ui.calls.CallScreen(otherUser, isVideoCall = false, isIncoming = false)) }) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        IconButton(
+                            onClick = { navigator?.push(com.nephclick.eyefield.ui.calls.CallScreen(otherUser, isVideoCall = false, isIncoming = false)) },
+                            modifier = Modifier.size(36.dp)
+                        ) {
                             androidx.compose.foundation.Image(
                                 org.jetbrains.compose.resources.painterResource(Res.drawable.phone_call),
                                 contentDescription = stringResource(Res.string.voice_call),
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(20.dp),
                                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary)
                             )
                         }
-                        IconButton(onClick = { navigator?.push(com.nephclick.eyefield.ui.calls.CallScreen(otherUser, isVideoCall = true, isIncoming = false)) }) {
+                        IconButton(
+                            onClick = { navigator?.push(com.nephclick.eyefield.ui.calls.CallScreen(otherUser, isVideoCall = true, isIncoming = false)) },
+                            modifier = Modifier.size(36.dp)
+                        ) {
                             androidx.compose.foundation.Image(
                                 org.jetbrains.compose.resources.painterResource(Res.drawable.zoom_video),
                                 contentDescription = stringResource(Res.string.video_call),
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(20.dp),
                                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary)
                             )
                         }
-                        IconButton(onClick = { showSearchPopup = true }) {
+                        IconButton(
+                            onClick = { showSearchPopup = true },
+                            modifier = Modifier.size(36.dp)
+                        ) {
                             androidx.compose.foundation.Image(
                                 org.jetbrains.compose.resources.painterResource(Res.drawable.binder),
                                 contentDescription = stringResource(Res.string.binder),
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                         Box {
-                            IconButton(onClick = { expandedMenu = true }) {
-                                Text("⋮", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            IconButton(
+                                onClick = { expandedMenu = true },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("⋮", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                             DropdownMenu(
                                 expanded = expandedMenu,
@@ -293,14 +385,14 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 )
                             }
                         }
-                        if (isUploadingMedia) {
-                            val pct = (chatUploadProgress * 100).toInt()
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                CircularProgressIndicator(progress = chatUploadProgress, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Uploading $pct%", style = MaterialTheme.typography.labelSmall)
-                            }
-                        }
+                    }
+                    if (isUploadingMedia) {
+                        LinearProgressIndicator(
+                            progress = { chatUploadProgress },
+                            modifier = Modifier.fillMaxWidth().height(3.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                     }
                     HorizontalDivider()
                 }
@@ -311,8 +403,8 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface)
                         .navigationBarsPadding()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         if (replyReference != null) {
@@ -325,8 +417,8 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text("Replying to ${if (replyReference!!.senderId == currentUserId) stringResource(Res.string.replying_to_yourself) else otherUser.username}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                                    Text(replyReference!!.text.take(30) + if (replyReference!!.text.length > 30) "..." else "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("Replying to ${if (replyReference!!.senderId == currentUserId) stringResource(Res.string.replying_to_yourself) else otherUser.username}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(replyReference!!.text.take(30) + if (replyReference!!.text.length > 30) "..." else "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 }
                                 IconButton(onClick = { replyReference = null }, modifier = Modifier.size(24.dp)) {
                                     Text("✕", fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -336,7 +428,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                         OutlinedTextField(
                             value = messageText,
                             onValueChange = { messageText = it },
-                            placeholder = { Text(if (isRecording) "${stringResource(Res.string.recording_dots)}${recordingSeconds / 60}:${(recordingSeconds % 60).toString().padStart(2, '0')}" else stringResource(Res.string.message_dots), color = if (isRecording) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant) },
+                            placeholder = { Text(if (isRecording) "${stringResource(Res.string.recording_dots)}${recordingSeconds / 60}:${(recordingSeconds % 60).toString().padStart(2, '0')}" else stringResource(Res.string.message_dots), color = if (isRecording) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             leadingIcon = {
                                 if (!isRecording) {
                                     IconButton(onClick = { showAttachmentPopup = true }) {
@@ -366,6 +458,14 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                     )
                                 }
                             },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Send,
+                                keyboardType = KeyboardType.Text
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSend = { performSendMessage() }
+                            ),
+                            maxLines = 4,
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(24.dp),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -377,35 +477,31 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF000080)) // Navy blue
-                            .pointerInput(messageText) {
-                                detectTapGestures(
-                                    onTap = {
-                                        if (messageText.isNotBlank()) {
-                                            val text = messageText
-                                            messageText = ""
-                                            val finalMessageText = if (replyReference != null) "> Replying to: ${replyReference!!.text.take(20)}...\n\n$text" else text
-                                            replyReference = null
-                                            scope.launch {
-                                                val newMessage = ChatMessage(
-                                                    roomId = roomId,
-                                                    senderId = currentUserId,
-                                                    text = finalMessageText,
-                                                    createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
-                                                )
-                                                messages = messages + newMessage
-                                                com.nephclick.eyefield.Supabase.sendMessage(newMessage)
-                                            }
-                                        } else {
-                                            // Fallback for short tap on microphone
-                                        }
-                                    },
-                                    onPress = {
-                                        if (messageText.isBlank()) {
+                    if (messageText.isNotBlank()) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF000080)) // Navy blue
+                                .clickable { performSendMessage() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.foundation.Image(
+                                painter = org.jetbrains.compose.resources.painterResource(Res.drawable.send_3),
+                                contentDescription = stringResource(Res.string.send),
+                                modifier = Modifier.size(24.dp).padding(start = 4.dp),
+                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
+                            )
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(if (isRecording) Color.Red else Color(0xFF000080)) // Navy blue
+                                .pointerInput(hasAudioPermission) {
+                                    detectTapGestures(
+                                        onPress = {
                                             if (!hasAudioPermission) {
                                                 audioPermissionLauncher()
                                             } else {
@@ -416,230 +512,248 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                                                 audioRecorder.stopRecording { bytes ->
                                                     if (bytes != null) {
                                                         scope.launch {
-                                                        isUploadingMedia = true
-                                                        try {
-                                                            val url = com.nephclick.eyefield.utils.R2Uploader.uploadMedia(bytes, "chat", "audio/mpeg", "mp3")
-                                                            val newVoiceNote = ChatMessage(
-                                                                roomId = roomId,
-                                                                senderId = currentUserId,
-                                                                text = "Field Voice Note",
-                                                                mediaUrl = url,
-                                                                createdAt = com.nephclick.eyefield.utils.getCurrentTimeMillis().toString()
-                                                            )
-                                                            messages = messages + newVoiceNote
-                                                            com.nephclick.eyefield.Supabase.sendMessage(newVoiceNote)
-                                                        } catch (e: Exception) {
-                                                            println("Voice note upload failed: ${e.message}")
-                                                        } finally {
-                                                            isUploadingMedia = false
+                                                            isUploadingMedia = true
+                                                            try {
+                                                                val url = com.nephclick.eyefield.utils.R2Uploader.uploadMedia(bytes, "chat", "audio/mpeg", "mp3")
+                                                                val newVoiceNote = ChatMessage(
+                                                                    id = generateUUID(),
+                                                                    roomId = roomId,
+                                                                    senderId = currentUserId,
+                                                                    text = "Field Voice Note",
+                                                                    mediaUrl = url,
+                                                                    createdAt = getIsoTimestamp()
+                                                                )
+                                                                messages = messages + newVoiceNote
+                                                                com.nephclick.eyefield.Supabase.sendMessage(newVoiceNote)
+                                                                if (messages.isNotEmpty()) {
+                                                                    listState.animateScrollToItem(messages.size - 1)
+                                                                }
+                                                            } catch (e: Exception) {
+                                                                println("Voice note upload failed: ${e.message}")
+                                                            } finally {
+                                                                isUploadingMedia = false
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-                                            }
                                         }
-                                    }
-                                )
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        androidx.compose.foundation.Image(
-                            painter = org.jetbrains.compose.resources.painterResource(
-                                if (messageText.isNotBlank()) Res.drawable.send_3 else Res.drawable.microphone
-                            ),
-                            contentDescription = if (messageText.isNotBlank()) stringResource(Res.string.send) else stringResource(Res.string.voice_note),
-                            modifier = Modifier.size(24.dp).padding(start = if(messageText.isNotBlank()) 4.dp else 0.dp),
-                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
-                        )
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.foundation.Image(
+                                painter = org.jetbrains.compose.resources.painterResource(Res.drawable.microphone),
+                                contentDescription = stringResource(Res.string.voice_note),
+                                modifier = Modifier.size(24.dp),
+                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
+                            )
+                        }
                     }
                 }
             }
         ) { paddingValues ->
-            LazyColumn(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Bottom,
-                state = listState
             ) {
-                items(filteredMessages) { message ->
-                    val isMine = message.senderId == currentUserId
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(
-                                    topStart = 16.dp,
-                                    topEnd = 16.dp,
-                                    bottomStart = if (isMine) 16.dp else 0.dp,
-                                    bottomEnd = if (isMine) 0.dp else 16.dp
-                                ))
-                                .background(if (isMine) Color(0xFF000080) else MaterialTheme.colorScheme.surfaceVariant)
-                                .padding(12.dp)
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onLongPress = { showMessageOptions = message }
-                                    )
-                                }
+                val maxBubbleWidth = maxWidth * 0.82f
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    state = listState
+                ) {
+                    items(
+                        items = filteredMessages,
+                        key = { it.id.ifEmpty { it.createdAt ?: it.hashCode().toString() } }
+                    ) { message ->
+                        val isMine = message.senderId == currentUserId
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                            horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start
                         ) {
-                            Column(horizontalAlignment = if (isMine) Alignment.End else Alignment.Start) {
-                                if (message.text == "Field Voice Note" || message.mediaUrl?.endsWith(".mp3") == true) {
-                                    val audioPlayer = remember { com.nephclick.eyefield.utils.AudioPlayer() }
-                                    var isPlaying by remember { mutableStateOf(false) }
-                                    var progress by remember { mutableStateOf(0f) }
-                                    var speedMultiplier by remember { mutableStateOf(1f) }
-
-                                    DisposableEffect(message.id) {
-                                        onDispose { audioPlayer.stop() }
-                                    }
-
-                                    LaunchedEffect(isPlaying) {
-                                        if (isPlaying) {
-                                            if (progress == 0f) {
-                                                message.mediaUrl?.let { audioPlayer.play(it) }
-                                            } else {
-                                                audioPlayer.resume()
-                                            }
-                                            audioPlayer.setSpeed(speedMultiplier)
-                                            while (progress < 1f) {
-                                                kotlinx.coroutines.delay((100 / speedMultiplier).toLong())
-                                                progress += 0.01f
-                                            }
-                                            isPlaying = false
-                                            progress = 0f
-                                            audioPlayer.stop()
-                                        } else {
-                                            audioPlayer.pause()
-                                        }
-                                    }
-                                    LaunchedEffect(speedMultiplier) {
-                                        if (isPlaying) audioPlayer.setSpeed(speedMultiplier)
-                                    }
-
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        androidx.compose.foundation.Image(
-                                            painter = org.jetbrains.compose.resources.painterResource(Res.drawable.microphone),
-                                            contentDescription = stringResource(Res.string.voice_note),
-                                            modifier = Modifier.size(24.dp),
-                                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isMine) Color.White else MaterialTheme.colorScheme.onSurface)
+                            Box(
+                                modifier = Modifier
+                                    .widthIn(min = 60.dp, max = maxBubbleWidth)
+                                    .clip(RoundedCornerShape(
+                                        topStart = 16.dp,
+                                        topEnd = 16.dp,
+                                        bottomStart = if (isMine) 16.dp else 0.dp,
+                                        bottomEnd = if (isMine) 0.dp else 16.dp
+                                    ))
+                                    .background(if (isMine) Color(0xFF000080) else MaterialTheme.colorScheme.surfaceVariant)
+                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onLongPress = { showMessageOptions = message }
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        IconButton(onClick = { isPlaying = !isPlaying }) {
-                                            Text(if (isPlaying) "⏸" else "▶", color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface)
+                                    }
+                            ) {
+                                Column(horizontalAlignment = if (isMine) Alignment.End else Alignment.Start) {
+                                    if (message.text == "Field Voice Note" || message.mediaUrl?.endsWith(".mp3") == true) {
+                                        val audioPlayer = remember { com.nephclick.eyefield.utils.AudioPlayer() }
+                                        var isPlaying by remember { mutableStateOf(false) }
+                                        var progress by remember { mutableStateOf(0f) }
+                                        var speedMultiplier by remember { mutableStateOf(1f) }
+
+                                        DisposableEffect(message.id) {
+                                            onDispose { audioPlayer.stop() }
                                         }
-                                        Slider(
-                                            value = progress,
-                                            onValueChange = { progress = it },
-                                            modifier = Modifier.width(100.dp),
-                                            colors = SliderDefaults.colors(
-                                                thumbColor = if (isMine) Color.White else MaterialTheme.colorScheme.primary,
-                                                activeTrackColor = if (isMine) Color.LightGray else MaterialTheme.colorScheme.primary
-                                            )
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        TextButton(onClick = { speedMultiplier = if (speedMultiplier == 1f) 2f else 1f }) {
-                                            Text("x${speedMultiplier.toInt()}", color = if (isMine) Color.White else MaterialTheme.colorScheme.primary)
-                                        }
-                                    }
-                                } else if (message.mediaUrl?.endsWith(".jpg") == true || message.mediaUrl?.endsWith(".png") == true) {
-                                    AsyncImage(
-                                        model = message.mediaUrl,
-                                        contentDescription = stringResource(Res.string.image_attachment),
-                                        modifier = Modifier.height(200.dp).clip(RoundedCornerShape(8.dp)).clickable { fullScreenImageUrl = message.mediaUrl },
-                                        contentScale = ContentScale.Crop
-                                    )
-                                } else if (message.mediaUrl?.endsWith(".mp4") == true) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable { openDocumentWithChooser(message.mediaUrl!!, "mp4") }) {
-                                        androidx.compose.foundation.Image(
-                                            painter = org.jetbrains.compose.resources.painterResource(Res.drawable.video_lesson),
-                                            contentDescription = stringResource(Res.string.play_video),
-                                            modifier = Modifier.size(48.dp),
-                                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isMine) Color.White else MaterialTheme.colorScheme.primary)
-                                        )
-                                        Text(stringResource(Res.string.play_video), color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface)
-                                    }
-                                } else if (message.mediaUrl?.endsWith(".pdf") == true || message.mediaUrl?.endsWith(".doc") == true || message.mediaUrl?.endsWith(".docx") == true) {
-                                    val ext = message.mediaUrl!!.substringAfterLast(".", "pdf")
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable { openDocumentWithChooser(message.mediaUrl!!, ext) }) {
-                                        Text("📄", fontSize = 48.sp)
-                                        Text(stringResource(Res.string.open_document), color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface)
-                                    }
-                                } else if (message.text.startsWith("> Replying to: ")) {
-                                    val lines = message.text.split("\n\n", limit = 2)
-                                    val replyPart = lines.getOrNull(0) ?: ""
-                                    val actualText = lines.getOrNull(1) ?: ""
-                                    
-                                    Column {
-                                        Row(
-                                            modifier = Modifier.clickable {
-                                                val snippet = replyPart.removePrefix("> Replying to: ").removeSuffix("...")
-                                                val origIndex = filteredMessages.indexOfFirst { it.text.contains(snippet) }
-                                                if (origIndex != -1) {
-                                                    scope.launch { listState.animateScrollToItem(origIndex) }
+
+                                        LaunchedEffect(isPlaying) {
+                                            if (isPlaying) {
+                                                if (progress == 0f) {
+                                                    message.mediaUrl?.let { audioPlayer.play(it) }
+                                                } else {
+                                                    audioPlayer.resume()
                                                 }
-                                            }.padding(bottom = 4.dp, end = 16.dp, top = 2.dp)
-                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
-                                            .padding(4.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            androidx.compose.foundation.Image(painter = org.jetbrains.compose.resources.painterResource(Res.drawable.reply), contentDescription = "Reply", modifier = Modifier.size(16.dp), colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary))
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(replyPart.removePrefix("> "), color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                                                audioPlayer.setSpeed(speedMultiplier)
+                                                while (progress < 1f) {
+                                                    kotlinx.coroutines.delay((100 / speedMultiplier).toLong())
+                                                    progress += 0.01f
+                                                }
+                                                isPlaying = false
+                                                progress = 0f
+                                                audioPlayer.stop()
+                                            } else {
+                                                audioPlayer.pause()
+                                            }
                                         }
+                                        LaunchedEffect(speedMultiplier) {
+                                            if (isPlaying) audioPlayer.setSpeed(speedMultiplier)
+                                        }
+
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            androidx.compose.foundation.Image(
+                                                painter = org.jetbrains.compose.resources.painterResource(Res.drawable.microphone),
+                                                contentDescription = stringResource(Res.string.voice_note),
+                                                modifier = Modifier.size(20.dp),
+                                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isMine) Color.White else MaterialTheme.colorScheme.onSurface)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            IconButton(onClick = { isPlaying = !isPlaying }, modifier = Modifier.size(28.dp)) {
+                                                Text(if (isPlaying) "⏸" else "▶", color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                                            }
+                                            Slider(
+                                                value = progress,
+                                                onValueChange = { progress = it },
+                                                modifier = Modifier.weight(1f, fill = false).widthIn(min = 60.dp, max = 110.dp),
+                                                colors = SliderDefaults.colors(
+                                                    thumbColor = if (isMine) Color.White else MaterialTheme.colorScheme.primary,
+                                                    activeTrackColor = if (isMine) Color.LightGray else MaterialTheme.colorScheme.primary
+                                                )
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            TextButton(
+                                                onClick = { speedMultiplier = if (speedMultiplier == 1f) 2f else 1f },
+                                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                                modifier = Modifier.height(28.dp)
+                                            ) {
+                                                Text("x${speedMultiplier.toInt()}", color = if (isMine) Color.White else MaterialTheme.colorScheme.primary, fontSize = 11.sp)
+                                            }
+                                        }
+                                    } else if (message.mediaUrl?.endsWith(".jpg") == true || message.mediaUrl?.endsWith(".png") == true) {
+                                        AsyncImage(
+                                            model = message.mediaUrl,
+                                            contentDescription = stringResource(Res.string.image_attachment),
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp, max = 220.dp).clip(RoundedCornerShape(8.dp)).clickable { fullScreenImageUrl = message.mediaUrl },
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else if (message.mediaUrl?.endsWith(".mp4") == true) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().clickable { openDocumentWithChooser(message.mediaUrl!!, "mp4") }) {
+                                            androidx.compose.foundation.Image(
+                                                painter = org.jetbrains.compose.resources.painterResource(Res.drawable.video_lesson),
+                                                contentDescription = stringResource(Res.string.play_video),
+                                                modifier = Modifier.size(48.dp),
+                                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isMine) Color.White else MaterialTheme.colorScheme.primary)
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(stringResource(Res.string.play_video), color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        }
+                                    } else if (message.mediaUrl?.endsWith(".pdf") == true || message.mediaUrl?.endsWith(".doc") == true || message.mediaUrl?.endsWith(".docx") == true) {
+                                        val ext = message.mediaUrl!!.substringAfterLast(".", "pdf")
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().clickable { openDocumentWithChooser(message.mediaUrl!!, ext) }) {
+                                            Text("📄", fontSize = 40.sp)
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(stringResource(Res.string.open_document), color = if (isMine) Color.White else MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        }
+                                    } else if (message.text.startsWith("> Replying to: ")) {
+                                        val lines = message.text.split("\n\n", limit = 2)
+                                        val replyPart = lines.getOrNull(0) ?: ""
+                                        val actualText = lines.getOrNull(1) ?: ""
                                         
-                                        val isLink = actualText.contains("http://") || actualText.contains("https://")
+                                        Column {
+                                            Row(
+                                                modifier = Modifier.clickable {
+                                                    val snippet = replyPart.removePrefix("> Replying to: ").removeSuffix("...")
+                                                    val origIndex = filteredMessages.indexOfFirst { it.text.contains(snippet) }
+                                                    if (origIndex != -1) {
+                                                        scope.launch { listState.animateScrollToItem(origIndex) }
+                                                    }
+                                                }.padding(bottom = 4.dp, end = 8.dp, top = 2.dp)
+                                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
+                                                .padding(4.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                androidx.compose.foundation.Image(painter = org.jetbrains.compose.resources.painterResource(Res.drawable.reply), contentDescription = "Reply", modifier = Modifier.size(16.dp), colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary))
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Text(replyPart.removePrefix("> "), color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                            }
+                                            
+                                            val isLink = actualText.contains("http://") || actualText.contains("https://")
+                                            val textMod = if (isLink) Modifier.clickable { 
+                                                val url = actualText.split(" ").firstOrNull { it.startsWith("http") }
+                                                if (url != null) uriHandler.openUri(url)
+                                            } else Modifier
+                                            Text(
+                                                text = actualText,
+                                                color = if (isLink) MaterialTheme.colorScheme.primary else if (isMine) Color.White else MaterialTheme.colorScheme.onSurface,
+                                                fontSize = 15.sp,
+                                                modifier = textMod
+                                            )
+                                        }
+                                    } else {
+                                        val isLink = message.text.contains("http://") || message.text.contains("https://")
                                         val textMod = if (isLink) Modifier.clickable { 
-                                            val url = actualText.split(" ").firstOrNull { it.startsWith("http") }
+                                            val url = message.text.split(" ").firstOrNull { it.startsWith("http") }
                                             if (url != null) uriHandler.openUri(url)
                                         } else Modifier
                                         Text(
-                                            text = actualText,
+                                            text = message.text,
                                             color = if (isLink) MaterialTheme.colorScheme.primary else if (isMine) Color.White else MaterialTheme.colorScheme.onSurface,
-                                            fontSize = 16.sp,
+                                            fontSize = 15.sp,
                                             modifier = textMod
                                         )
                                     }
-                                } else {
-                                    val isLink = message.text.contains("http://") || message.text.contains("https://")
-                                    val textMod = if (isLink) Modifier.clickable { 
-                                        val url = message.text.split(" ").firstOrNull { it.startsWith("http") }
-                                        if (url != null) uriHandler.openUri(url)
-                                    } else Modifier
-                                    Text(
-                                        text = message.text,
-                                        color = if (isLink) MaterialTheme.colorScheme.primary else if (isMine) Color.White else MaterialTheme.colorScheme.onSurface,
-                                        fontSize = 16.sp,
-                                        modifier = textMod
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = try {
-                                            val str = message.createdAt ?: ""
-                                            if (str.length >= 16 && str.contains("T")) {
-                                                val date = str.substringBefore("T")
-                                                val time = str.substringAfter("T").substring(0, 5)
-                                                "$date $time"
-                                            } else str
-                                        } catch (e: Exception) {
-                                            ""
-                                        },
-                                        color = if (isMine) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                        fontSize = 10.sp
-                                    )
-                                    if (isMine) {
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        val receiptIcon = if (message.isRead) Res.drawable.eye else if (isOtherUserOnline) Res.drawable.eye_2 else Res.drawable.close_eye
-                                        androidx.compose.foundation.Image(
-                                            painter = org.jetbrains.compose.resources.painterResource(receiptIcon),
-                                            contentDescription = stringResource(Res.string.read_receipt),
-                                            modifier = Modifier.size(12.dp),
-                                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White.copy(alpha = 0.7f))
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = try {
+                                                val str = message.createdAt ?: ""
+                                                if (str.length >= 16 && str.contains("T")) {
+                                                    val date = str.substringBefore("T")
+                                                    val time = str.substringAfter("T").substring(0, 5)
+                                                    "$date $time"
+                                                } else str
+                                            } catch (e: Exception) {
+                                                ""
+                                            },
+                                            color = if (isMine) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                            fontSize = 10.sp
                                         )
+                                        if (isMine) {
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            val receiptIcon = if (message.isRead) Res.drawable.eye else if (isOtherUserOnline) Res.drawable.eye_2 else Res.drawable.close_eye
+                                            androidx.compose.foundation.Image(
+                                                painter = org.jetbrains.compose.resources.painterResource(receiptIcon),
+                                                contentDescription = stringResource(Res.string.read_receipt),
+                                                modifier = Modifier.size(12.dp),
+                                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White.copy(alpha = 0.7f))
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -652,6 +766,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
         if (showSearchPopup) {
             AlertDialog(
                 onDismissRequest = { showSearchPopup = false },
+                modifier = Modifier.fillMaxWidth(0.95f),
                 containerColor = if (isDarkMode) Color.Black else Color.White,
                 title = { Text(stringResource(Res.string.search_messages_title), color = if (isDarkMode) Color.White else Color.Black) },
                 text = {
@@ -688,11 +803,11 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         if (filteredMessages.isEmpty()) {
-                            Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                            Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
                                 Text("${stringResource(Res.string.no_results_found_for)}${searchTabs[selectedSearchTab]}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         } else {
-                            LazyColumn(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+                            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 280.dp)) {
                                 items(filteredMessages) { message ->
                                     val index = filteredMessages.indexOf(message)
                                     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).clickable {
@@ -817,7 +932,7 @@ class ChatDetailScreen(val roomId: String, val otherUser: Profile) : Screen {
         if (showMessageOptions != null) {
             AlertDialog(
                 onDismissRequest = { showMessageOptions = null },
-                modifier = Modifier.width(200.dp), // Reduce size
+                modifier = Modifier.widthIn(min = 220.dp, max = 280.dp),
                 containerColor = if (isDarkMode) Color.Black else Color.White,
                 title = { Text(stringResource(Res.string.options), fontSize = 16.sp, color = if (isDarkMode) Color.White else Color.Black) },
                 text = {

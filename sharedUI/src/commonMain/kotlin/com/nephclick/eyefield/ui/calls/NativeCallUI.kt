@@ -9,5 +9,7 @@ expect fun NativeCallUI(
     appId: String,
     userAccount: String,
     isVideoCall: Boolean,
+    otherUserName: String = "User",
+    otherUserAvatarUrl: String? = null,
     onCallEnded: () -> Unit
 )
