@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "build:shared": "./gradlew :sharedLogic:jsBrowserDevelopmentLibraryDistribution",
-    "build": "npm run build:shared && npm run build -w webApp",
-    "start": "npm run build:shared && npm run start -w webApp"
+    "build": "npm run build -w webApp && rm -rf dist && cp -r webApp/dist dist",
+    "build:all": "npm run build:shared && npm run build -w webApp",
+    "start": "npm run build -w webApp"
   }
 }
