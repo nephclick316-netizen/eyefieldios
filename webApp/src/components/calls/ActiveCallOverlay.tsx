@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import AgoraRTC, { IAgoraRTCClient, ICameraVideoTrack, IMicrophoneAudioTrack, IRemoteUser } from "agora-rtc-sdk-ng";
+import AgoraRTC, { IAgoraRTCClient, ICameraVideoTrack, IMicrophoneAudioTrack, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCalls } from "@/context/CallContext";
 import { useUser } from "@/context/UserContext";
@@ -22,7 +22,7 @@ const ActiveCallOverlay = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [isMicMuted, setIsMicMuted] = useState(false);
     const [isCameraOff, setIsCameraOff] = useState(false);
-    const [remoteUsers, setRemoteUsers] = useState<IRemoteUser[]>([]);
+    const [remoteUsers, setRemoteUsers] = useState<IAgoraRTCRemoteUser[]>([]);
     const [callDuration, setCallDuration] = useState(0);
 
     // Refs for tracks and client

@@ -131,7 +131,7 @@ export const useChat = (user: any, selectedChat: any, setSelectedChat: (chat: an
         table: 'chat_messages' 
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          const newMsg = { ...payload.new, reactions: [], content: payload.new.text || payload.new.content };
+          const newMsg: any = { ...payload.new, reactions: [], content: (payload.new as any).text || (payload.new as any).content };
           
           // Update message list if it's the active chat
           if (selectedChat?.id === payload.new.room_id) {

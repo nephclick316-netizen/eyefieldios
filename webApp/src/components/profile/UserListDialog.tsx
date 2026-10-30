@@ -17,7 +17,7 @@ interface UserListDialogProps {
   currentUserId?: string;
   trigger: React.ReactNode;
   myFollowingIds: Set<string>;
-  onFollowToggle: (targetId: string, isFollowing: boolean) => Promise<void>;
+  onFollowToggle: (targetId: string, isFollowing: boolean) => Promise<void> | void;
 }
 
 const UserListDialog = ({ 

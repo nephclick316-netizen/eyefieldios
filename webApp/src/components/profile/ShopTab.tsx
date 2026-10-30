@@ -69,8 +69,8 @@ const ShopTab: React.FC<ShopTabProps> = ({ products, isOwner, onDelete, onUpdate
             let first = media[0];
             if (typeof first === 'string') { try { first = JSON.parse(first); } catch(e){} }
             imageUrl = first?.url || first || imageUrl;
-          } else if (typeof media === 'object' && media?.url) {
-            imageUrl = media.url;
+          } else if (typeof media === 'object' && media !== null && (media as any).url) {
+            imageUrl = (media as any).url;
           } else if (typeof media === 'string') {
             imageUrl = media;
           }
